@@ -16,7 +16,10 @@
         <p class="sub" id="modelTag">connecting…</p>
       </div>
     </div>
-    <div class="status" id="healthDot" title="API status"></div>
+    <div class="topbar-right">
+      <button id="themeToggle" class="icon-btn" title="Toggle dark mode" aria-label="Toggle dark mode">🌙</button>
+      <div class="status" id="healthDot" title="API status"></div>
+    </div>
   </header>
 
   <div class="layout">
@@ -58,11 +61,14 @@
 
     <!-- Approvals -->
     <aside class="approvals">
-      <h2>✋ Needs your approval</h2>
+      <h2>✋ Needs your approval <span id="outboxCount" class="count-badge" hidden>0</span></h2>
       <p class="hint">Claude drafts; you approve before anything goes out.</p>
+      <button id="approveAll" class="approve-all" hidden>✓ Approve all</button>
       <div id="outbox" class="outbox"><p class="empty">Nothing waiting yet.</p></div>
     </aside>
   </div>
+
+  <div id="toasts" class="toasts" aria-live="polite"></div>
 
   <script src="app.js"></script>
 </body>

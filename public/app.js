@@ -11,8 +11,38 @@ const els = {
   outbox: $("#outbox"),
   model: $("#modelTag"),
   dot: $("#healthDot"),
-  reset: $("#resetBtn")
+  reset: $("#resetBtn"),
+  themeToggle: $("#themeToggle"),
+  outboxCount: $("#outboxCount"),
+  approveAll: $("#approveAll"),
+  toasts: $("#toasts")
 };
+
+// ---- Theme ----------------------------------------------------------------
+function applyTheme(theme) {
+  const dark = theme === "dark";
+  document.body.classList.toggle("dark", dark);
+  if (els.themeToggle) els.themeToggle.textContent = dark ? "☀️" : "🌙";
+}
+applyTheme(localStorage.getItem("theme") || "light");
+els.themeToggle?.addEventListener("click", () => {
+  const next = document.body.classList.contains("dark") ? "light" : "dark";
+  localStorage.setItem("theme", next);
+  applyTheme(next);
+});
+
+// ---- Toasts ---------------------------------------------------------------
+function toast(message, kind = "") {
+  if (!els.toasts) return;
+  const t = document.createElement("div");
+  t.className = "toast " + kind;
+  t.textContent = message;
+  els.toasts.appendChild(t);
+  setTimeout(() => {
+    t.classList.add("leaving");
+    t.addEventListener("animationend", () => t.remove(), { once: true });
+  }, 2600);
+}
 
 // ---- Boot -----------------------------------------------------------------
 async function boot() {
@@ -94,7 +124,12 @@ async function send(payload, displayText) {
     if (!res.ok) { addMsg("bot", "⚠️ " + (data.error || "Something went wrong.")); return; }
     renderSteps(data.steps);
     addMsg("bot", data.reply || "(no response)");
+    const before = pendingCount;
     renderOutbox(data.outbox || []);
+    if (pendingCount > before) {
+      const n = pendingCount - before;
+      toast(`📋 ${n} draft${n > 1 ? "s" : ""} queued for your approval`);
+    }
   } catch (err) {
     typing.remove();
     addMsg("bot", "⚠️ Network error: " + err.message);
@@ -121,12 +156,31 @@ els.reset.addEventListener("click", async () => {
 function setBusy(b) { els.send.disabled = b; els.input.disabled = b; }
 
 // ---- Outbox / approvals ---------------------------------------------------
+let pendingCount = 0;
+
 async function refreshOutbox() {
   const list = await (await fetch("/api/outbox")).json();
   renderOutbox(list);
 }
 
+async function approveDraft(id) {
+  await fetch(`/api/outbox/${id}/approve`, { method: "POST" });
+  toast("✓ Approved", "ok");
+  refreshOutbox();
+}
+
 function renderOutbox(list) {
+  const pending = list.filter((o) => o.status !== "approved");
+  pendingCount = pending.length;
+
+  // Count badge
+  if (els.outboxCount) {
+    els.outboxCount.textContent = pendingCount;
+    els.outboxCount.hidden = pendingCount === 0;
+  }
+  // Approve-all button (only when 2+ pending)
+  if (els.approveAll) els.approveAll.hidden = pendingCount < 2;
+
   if (!list.length) { els.outbox.innerHTML = `<p class="empty">Nothing waiting yet.</p>`; return; }
   els.outbox.innerHTML = list.map((o) => `
     <div class="card ${o.status === "approved" ? "approved" : ""}">
@@ -139,11 +193,16 @@ function renderOutbox(list) {
         : `<button data-id="${o.id}">Approve & send</button>`}
     </div>`).join("");
   els.outbox.querySelectorAll("button[data-id]").forEach((b) =>
-    b.addEventListener("click", async () => {
-      await fetch(`/api/outbox/${b.dataset.id}/approve`, { method: "POST" });
-      refreshOutbox();
-    }));
+    b.addEventListener("click", () => approveDraft(b.dataset.id)));
 }
+
+els.approveAll?.addEventListener("click", async () => {
+  const list = await (await fetch("/api/outbox")).json();
+  const pending = list.filter((o) => o.status !== "approved");
+  await Promise.all(pending.map((o) => fetch(`/api/outbox/${o.id}/approve`, { method: "POST" })));
+  toast(`✓ Approved all ${pending.length}`, "ok");
+  refreshOutbox();
+});
 
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
