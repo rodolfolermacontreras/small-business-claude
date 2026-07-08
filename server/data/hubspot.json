@@ -1,0 +1,18 @@
+{
+  "pipeline": [
+    { "id": "DEAL-201", "name": "Hotel Meridian - annual contract", "stage": "proposal", "amount": 42000, "probability": 0.6, "close_date": "2026-08-15", "owner": "Sam Rivera" },
+    { "id": "DEAL-205", "name": "Westside Co-op wholesale", "stage": "qualified", "amount": 18000, "probability": 0.4, "close_date": "2026-09-01", "owner": "Sam Rivera" },
+    { "id": "DEAL-210", "name": "Airport kiosk pilot", "stage": "discovery", "amount": 9000, "probability": 0.2, "close_date": "2026-09-20", "owner": "Sam Rivera" },
+    { "id": "DEAL-198", "name": "Farmers market booth expansion", "stage": "closed_won", "amount": 6500, "probability": 1.0, "close_date": "2026-06-28", "owner": "Sam Rivera" }
+  ],
+  "leads": [
+    { "id": "LEAD-540", "name": "Mia Torres", "company": "Torres Catering", "email": "mia@torrescatering.com", "source": "website form", "created": "2026-07-07", "status": "new", "note": "Wants 20lb/week house blend" },
+    { "id": "LEAD-541", "name": "Devon Park", "company": "Park & Co Offices", "email": "devon@parkco.com", "source": "referral", "created": "2026-07-08", "status": "new", "note": "Office coffee subscription inquiry" },
+    { "id": "LEAD-538", "name": "Ally Nguyen", "company": "Nguyen Bistro", "email": "ally@nguyenbistro.com", "source": "instagram", "created": "2026-07-06", "status": "new", "note": "Asked about espresso beans + training" }
+  ],
+  "campaigns": [
+    { "id": "CAMP-11", "name": "Summer Cold Brew Launch", "channel": "email", "sent": 2400, "opens": 912, "clicks": 168, "revenue": 4300, "cost": 300, "period": "2026-06" },
+    { "id": "CAMP-12", "name": "Wholesale referral push", "channel": "email", "sent": 320, "opens": 190, "clicks": 55, "revenue": 8100, "cost": 150, "period": "2026-06" },
+    { "id": "CAMP-10", "name": "Spring roast sampler", "channel": "social", "sent": 0, "opens": 0, "clicks": 240, "revenue": 1600, "cost": 400, "period": "2026-05" }
+  ]
+}

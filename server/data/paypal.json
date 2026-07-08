@@ -1,0 +1,13 @@
+{
+  "balance": { "available": 8420.55, "currency": "USD" },
+  "settlements": [
+    { "id": "PP-88213", "type": "sale", "gross": 1840.00, "fee": 62.36, "net": 1777.64, "date": "2026-07-09", "status": "pending", "note": "Bluebird Bakery wholesale" },
+    { "id": "PP-88190", "type": "sale", "gross": 420.00, "fee": 15.18, "net": 404.82, "date": "2026-07-07", "status": "completed", "note": "Cafe retail batch" },
+    { "id": "PP-88175", "type": "sale", "gross": 3200.00, "fee": 107.30, "net": 3092.70, "date": "2026-07-11", "status": "pending", "note": "Corner Cafe Group" },
+    { "id": "PP-88160", "type": "refund", "gross": -85.00, "fee": -2.98, "net": -82.02, "date": "2026-07-05", "status": "completed", "note": "Damaged bag refund" },
+    { "id": "PP-88140", "type": "sale", "gross": 960.00, "fee": 34.14, "net": 925.86, "date": "2026-07-06", "status": "completed", "note": "The Daily Grind" }
+  ],
+  "disputes": [
+    { "id": "DP-3391", "amount": 129.00, "reason": "Item not received", "customer": "web order #5521", "opened": "2026-07-03", "status": "needs_response", "respond_by": "2026-07-13" }
+  ]
+}

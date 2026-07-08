@@ -1,0 +1,19 @@
+{
+  "name": "small-business-claude",
+  "version": "1.0.0",
+  "description": "A local, runnable small-business AI copilot powered by the Claude API — agentic workflows, connector tools, and a friendly UI for small business owners.",
+  "type": "module",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.65.0",
+    "dotenv": "^17.0.0",
+    "express": "^5.1.0"
+  }
+}

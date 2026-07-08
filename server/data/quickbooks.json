@@ -1,0 +1,18 @@
+{
+  "business": {
+    "name": "Riverside Roasters",
+    "type": "Specialty coffee roaster & cafe",
+    "owner": "Sam Rivera",
+    "currency": "USD",
+    "as_of": "2026-07-08"
+  },
+  "invoices": [
+    { "id": "INV-1042", "customer": "Bluebird Bakery", "email": "ap@bluebirdbakery.com", "amount": 1840.00, "issued": "2026-05-20", "due": "2026-06-19", "status": "overdue" },
+    { "id": "INV-1048", "customer": "Corner Cafe Group", "email": "billing@cornercafe.co", "amount": 3200.00, "issued": "2026-05-28", "due": "2026-06-27", "status": "overdue" },
+    { "id": "INV-1051", "customer": "The Daily Grind", "email": "accounts@dailygrind.com", "amount": 960.00, "issued": "2026-06-05", "due": "2026-07-05", "status": "overdue" },
+    { "id": "INV-1055", "customer": "Hotel Meridian", "email": "purchasing@hotelmeridian.com", "amount": 5400.00, "issued": "2026-06-18", "due": "2026-07-18", "status": "open" },
+    { "id": "INV-1058", "customer": "Green Leaf Grocers", "email": "ap@greenleaf.com", "amount": 1275.50, "issued": "2026-06-25", "due": "2026-07-25", "status": "open" },
+    { "id": "INV-1060", "customer": "Bluebird Bakery", "email": "ap@bluebirdbakery.com", "amount": 2100.00, "issued": "2026-07-01", "due": "2026-07-31", "status": "open" },
+    { "id": "INV-1035", "customer": "Sunrise Diner", "email": "owner@sunrisediner.com", "amount": 640.00, "issued": "2026-04-30", "due": "2026-05-30", "status": "paid" }
+  ]
+}

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Claude for Small Business</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">◆</span>
+      <div>
+        <h1>Claude <span>for Small Business</span></h1>
+        <p class="sub" id="modelTag">connecting…</p>
+      </div>
+    </div>
+    <div class="status" id="healthDot" title="API status"></div>
+  </header>
+
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <section>
+        <h2>Connected tools</h2>
+        <div id="connectors" class="connectors"></div>
+      </section>
+
+      <section>
+        <h2>Ready-to-run workflows</h2>
+        <div id="workflows" class="workflows"></div>
+      </section>
+
+      <button id="resetBtn" class="ghost-btn">↺ New conversation</button>
+    </aside>
+
+    <!-- Chat -->
+    <main class="chat">
+      <div id="messages" class="messages">
+        <div class="welcome">
+          <h2>👋 Hi, I'm your business copilot.</h2>
+          <p>Pick a workflow on the left, or just ask me something like:</p>
+          <ul>
+            <li>“Which invoices are overdue and how much am I owed?”</li>
+            <li>“Can I cover a $6,500 payroll run this cycle?”</li>
+            <li>“How did my last marketing campaign do?”</li>
+          </ul>
+          <p class="tip">Nothing sends, posts, or pays without your approval — drafts show up in <b>Needs your approval</b>.</p>
+        </div>
+      </div>
+
+      <form id="composer" class="composer">
+        <input id="input" type="text" placeholder="Ask about your cash, invoices, leads, campaigns…" autocomplete="off" />
+        <button type="submit" id="sendBtn">Send</button>
+      </form>
+    </main>
+
+    <!-- Approvals -->
+    <aside class="approvals">
+      <h2>✋ Needs your approval</h2>
+      <p class="hint">Claude drafts; you approve before anything goes out.</p>
+      <div id="outbox" class="outbox"><p class="empty">Nothing waiting yet.</p></div>
+    </aside>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
