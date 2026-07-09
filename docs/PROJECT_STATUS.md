@@ -29,11 +29,9 @@ Last updated: 2026-07-09
 ---
 
 ## In flight
-_(none — no active task briefs)_
-
-| Task | Worker session | Files in scope | Status |
-|------|----------------|----------------|--------|
-| — | — | — | — |
+| Task | Brief | Files in scope | Status |
+|------|-------|----------------|--------|
+| SQLite persistence for chats + outbox | `docs/tasks/TASK-001-sqlite-persistence.md` | `server/db.js` (new), `server/index.js`, `server/connectors/index.js`, `.gitignore` | Ready for a worker |
 
 ---
 
@@ -45,7 +43,6 @@ _(none)_
 ## Backlog (not started — need a task brief before pickup)
 | Priority | Item | Notes |
 |----------|------|-------|
-| — | SQLite persistence for chats + outbox | Survive restarts; keep interface stable |
 | — | Wire one REAL connector | e.g. live email send on approval |
 | — | Better forecast models | Holt-Winters/trend behind same `inv_optimize` interface |
 | — | More workflows | tax-season organizer, contract reviewer, margin analyzer |
