@@ -8,7 +8,7 @@ Last updated: 2026-07-09
 ## Snapshot
 - **Phase:** feature build on a working local demo.
 - **Branch:** `main` (in sync with `origin/main`).
-- **Latest commit:** `cd5bccc` — inventory optimizer (forecast + reorder plan).
+- **Latest commit:** `8008c02` — SQLite persistence for chat sessions + outbox.
 - **Model:** `claude-haiku-4-5-20251001`.
 - **Runtime:** Node.js ES modules, Express, no build step. `npm start` -> http://localhost:3000.
 
@@ -23,15 +23,18 @@ Last updated: 2026-07-09
 | 4 | Dashboard: KPI tiles + campaign ROI via `/api/metrics` | `e400a1b` |
 | 5 | Dashboard: collapsible overview + cash-movement sparkline | `bf2e711` |
 | 6 | Inventory optimizer: forecast + reorder plan (`/api/inventory`, 📦 workflow, dashboard card) | `cd5bccc` |
+| 7 | TASK-001: SQLite persistence for chat sessions + outbox (built-in `node:sqlite`, survives restart) | `8008c02` |
 
-**Current capability:** 4 connectors · 15 tools · 7 workflows · dashboard · inventory optimizer.
+**Current capability:** 4 connectors · 15 tools · 7 workflows · dashboard · inventory optimizer · persistent state.
 
 ---
 
 ## In flight
+_(none — no active task briefs)_
+
 | Task | Brief | Files in scope | Status |
 |------|-------|----------------|--------|
-| SQLite persistence for chats + outbox | `docs/tasks/TASK-001-sqlite-persistence.md` | `server/db.js` (new), `server/index.js`, `server/connectors/index.js`, `.gitignore` | Ready for a worker |
+| — | — | — | — |
 
 ---
 
