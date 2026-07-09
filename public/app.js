@@ -15,7 +15,8 @@ const els = {
   themeToggle: $("#themeToggle"),
   outboxCount: $("#outboxCount"),
   approveAll: $("#approveAll"),
-  toasts: $("#toasts")
+  toasts: $("#toasts"),
+  dashboard: $("#dashboard")
 };
 
 // ---- Theme ----------------------------------------------------------------
@@ -56,6 +57,55 @@ async function boot() {
   renderConnectors(cfg.connectors);
   renderWorkflows(cfg.workflows);
   refreshOutbox();
+  loadDashboard();
+}
+
+// ---- Dashboard ------------------------------------------------------------
+const money = (n) => "$" + Math.round(n).toLocaleString();
+
+async function loadDashboard() {
+  if (!els.dashboard) return;
+  let m;
+  try { m = await (await fetch("/api/metrics")).json(); }
+  catch { return; }
+
+  const tiles = [
+    { label: "Cash available", value: money(m.cash_available), sub: `+${money(m.pending_incoming)} incoming`, cls: "ok" },
+    { label: "Overdue", value: money(m.overdue_total), sub: `${m.overdue_count} invoice${m.overdue_count === 1 ? "" : "s"}`, cls: m.overdue_total > 0 ? "warn" : "ok" },
+    { label: "Open pipeline", value: money(m.pipeline_open), sub: `${money(m.pipeline_weighted)} weighted · ${m.open_deals} deals`, cls: "" },
+    { label: "Receivable", value: money(m.accounts_receivable), sub: m.disputes_open ? `${m.disputes_open} dispute open` : "no disputes", cls: m.disputes_open ? "warn" : "" }
+  ];
+
+  const campaigns = (m.campaigns || []).filter((c) => c.roi !== null);
+  const maxRoi = Math.max(1, ...campaigns.map((c) => c.roi));
+
+  els.dashboard.innerHTML = `
+    <div class="kpi-row">
+      ${tiles.map((t) => `
+        <div class="kpi ${t.cls}">
+          <span class="kpi-label">${t.label}</span>
+          <span class="kpi-value">${t.value}</span>
+          <span class="kpi-sub">${t.sub}</span>
+        </div>`).join("")}
+    </div>
+    ${campaigns.length ? `
+    <div class="chart-card">
+      <div class="chart-title">Campaign ROI (return per $1 spent)</div>
+      <div class="bars">
+        ${campaigns.map((c) => `
+          <div class="bar-row">
+            <span class="bar-name" title="${escapeHtml(c.name)}">${escapeHtml(c.name)}</span>
+            <div class="bar-track"><div class="bar-fill" data-w="${Math.round((c.roi / maxRoi) * 100)}"></div></div>
+            <span class="bar-val">${c.roi.toFixed(1)}×</span>
+          </div>`).join("")}
+      </div>
+    </div>` : ""}
+  `;
+
+  // Animate bars after layout
+  requestAnimationFrame(() =>
+    els.dashboard.querySelectorAll(".bar-fill").forEach((b) => { b.style.width = b.dataset.w + "%"; })
+  );
 }
 
 function renderConnectors(list) {

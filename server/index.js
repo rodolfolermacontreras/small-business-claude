@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { runAgent, MODEL } from "./agent.js";
 import { workflows, findWorkflow } from "./workflows.js";
-import { connectorStatus, outbox } from "./connectors/index.js";
+import { connectors, connectorStatus, outbox } from "./connectors/index.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -27,6 +27,48 @@ app.get("/api/health", (req, res) => {
 
 app.get("/api/config", (req, res) => {
   res.json({ model: MODEL, workflows, connectors: connectorStatus() });
+});
+
+// Read-only business metrics for the dashboard tiles + chart.
+// Uses the same connector layer as the agent — no data is mutated.
+app.get("/api/metrics", (req, res) => {
+  const invoices = connectors.quickbooks.listInvoices();
+  const overdue = invoices.filter((i) => i.status === "overdue");
+  const openInv = invoices.filter((i) => i.status !== "paid");
+  const receivable = openInv.reduce((s, i) => s + i.amount, 0);
+  const overdueTotal = overdue.reduce((s, i) => s + i.amount, 0);
+
+  const balance = connectors.paypal.getBalance();
+  const settlements = connectors.paypal.listSettlements();
+  const pendingIn = settlements
+    .filter((s) => s.status === "pending")
+    .reduce((s, x) => s + x.net, 0);
+  const disputes = connectors.paypal.listDisputes();
+
+  const pipeline = connectors.hubspot.getPipeline();
+  const openDeals = pipeline.filter((d) => d.stage !== "closed_won");
+  const pipelineOpen = openDeals.reduce((s, d) => s + d.amount, 0);
+  const pipelineWeighted = openDeals.reduce((s, d) => s + d.amount * d.probability, 0);
+
+  const campaigns = connectors.hubspot.getCampaigns().map((c) => ({
+    name: c.name,
+    revenue: c.revenue,
+    cost: c.cost,
+    roi: c.cost > 0 ? +((c.revenue - c.cost) / c.cost).toFixed(2) : null
+  }));
+
+  res.json({
+    cash_available: balance.available,
+    accounts_receivable: receivable,
+    overdue_total: overdueTotal,
+    overdue_count: overdue.length,
+    pending_incoming: pendingIn,
+    pipeline_open: pipelineOpen,
+    pipeline_weighted: pipelineWeighted,
+    open_deals: openDeals.length,
+    disputes_open: disputes.filter((d) => d.status !== "resolved").length,
+    campaigns
+  });
 });
 
 app.get("/api/outbox", (req, res) => res.json(outbox));
