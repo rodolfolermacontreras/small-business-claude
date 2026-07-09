@@ -1,5 +1,6 @@
 // Tool definitions exposed to Claude (Anthropic tool-use format) + dispatcher.
 import { connectors, actions } from "./connectors/index.js";
+import { optimizeAll, optimizeProduct } from "./optimizer.js";
 
 export const tools = [
   {
@@ -72,6 +73,34 @@ export const tools = [
       properties: { title: { type: "string" }, body: { type: "string", description: "Full report in markdown" } },
       required: ["title", "body"]
     }
+  },
+  {
+    name: "inv_list_products",
+    description: "List warehouse/inventory products with current on-hand stock, unit cost, supplier, and lead time.",
+    input_schema: { type: "object", properties: {} }
+  },
+  {
+    name: "inv_sales_history",
+    description: "Get 24 months of unit sales history for one product (by SKU) for demand analysis.",
+    input_schema: { type: "object", properties: { sku: { type: "string", description: "Product SKU" } }, required: ["sku"] }
+  },
+  {
+    name: "inv_optimize",
+    description: "Run the demand forecast + reorder optimization. Returns, per product: next-month forecast, safety stock, reorder point, days of cover, recommended order quantity, order-by date, and status (reorder_now / healthy / overstock). Optionally pass a single SKU.",
+    input_schema: { type: "object", properties: { sku: { type: "string", description: "Optional: limit to one product SKU" } } }
+  },
+  {
+    name: "draft_purchase_order",
+    description: "Draft a purchase order for a product. QUEUED for the owner's approval, not sent to the supplier automatically.",
+    input_schema: {
+      type: "object",
+      properties: {
+        sku: { type: "string" }, product: { type: "string" }, quantity: { type: "number" },
+        unit: { type: "string" }, supplier: { type: "string" }, needed_by: { type: "string", description: "Order-by or needed-by date" },
+        unit_cost: { type: "number" }, rationale: { type: "string", description: "Short reason for this order" }
+      },
+      required: ["sku", "product", "quantity"]
+    }
   }
 ];
 
@@ -86,7 +115,18 @@ const dispatch = {
   hs_get_campaigns: () => connectors.hubspot.getCampaigns(),
   draft_invoice_reminder: (a) => actions.draftInvoiceReminder(a),
   draft_lead_reply: (a) => actions.draftLeadReply(a),
-  create_report: (a) => actions.createReport(a)
+  create_report: (a) => actions.createReport(a),
+  inv_list_products: () => connectors.inventory.listProducts(),
+  inv_sales_history: (a) => connectors.inventory.getSalesHistory(a),
+  inv_optimize: (a = {}) => {
+    const hs = connectors.inventory.historyStart;
+    if (a && a.sku) {
+      const p = connectors.inventory.getProduct({ sku: a.sku });
+      return p ? optimizeProduct(p, hs) : { error: `Unknown sku ${a.sku}` };
+    }
+    return optimizeAll(connectors.inventory.all(), hs);
+  },
+  draft_purchase_order: (a) => actions.draftPurchaseOrder(a)
 };
 
 export async function runTool(name, input) {

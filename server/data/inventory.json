@@ -1,0 +1,78 @@
+{
+  "history_start": "2024-07",
+  "note": "monthly_units are units sold per month, oldest first, 24 months ending 2026-06 (Jul 2024 .. Jun 2026).",
+  "products": [
+    {
+      "sku": "GB-ETH",
+      "name": "Ethiopia Yirgacheffe green beans",
+      "unit": "kg",
+      "category": "Green coffee",
+      "on_hand": 90,
+      "unit_cost": 8.5,
+      "lead_time_days": 21,
+      "supplier": "Cafe Imports",
+      "min_order_qty": 60,
+      "monthly_units": [120,125,140,165,180,190,185,170,150,135,125,115,122,130,145,172,188,198,192,178,158,140,130,120]
+    },
+    {
+      "sku": "GB-COL",
+      "name": "Colombia Huila green beans",
+      "unit": "kg",
+      "category": "Green coffee",
+      "on_hand": 210,
+      "unit_cost": 7.8,
+      "lead_time_days": 21,
+      "supplier": "Cafe Imports",
+      "min_order_qty": 60,
+      "monthly_units": [90,92,100,115,128,135,130,120,108,98,92,86,94,96,104,120,134,142,138,126,112,102,95,90]
+    },
+    {
+      "sku": "BAG-12",
+      "name": "12oz retail coffee bags",
+      "unit": "each",
+      "category": "Packaging",
+      "on_hand": 300,
+      "unit_cost": 0.45,
+      "lead_time_days": 10,
+      "supplier": "PackRight",
+      "min_order_qty": 500,
+      "monthly_units": [800,820,870,920,1150,1280,880,840,860,870,900,880,900,920,980,1040,1300,1450,980,930,950,960,1000,980]
+    },
+    {
+      "sku": "CUP-16",
+      "name": "16oz to-go cups",
+      "unit": "each",
+      "category": "Packaging",
+      "on_hand": 5200,
+      "unit_cost": 0.12,
+      "lead_time_days": 7,
+      "supplier": "PackRight",
+      "min_order_qty": 1000,
+      "monthly_units": [2200,2250,2100,2000,1950,1980,1900,1880,1950,2050,2200,2400,2450,2500,2200,2050,2000,2030,1950,1920,2000,2120,2300,2520]
+    },
+    {
+      "sku": "SYR-VAN",
+      "name": "Vanilla syrup bottles",
+      "unit": "bottle",
+      "category": "Flavors",
+      "on_hand": 40,
+      "unit_cost": 6.2,
+      "lead_time_days": 14,
+      "supplier": "FlavorCo",
+      "min_order_qty": 24,
+      "monthly_units": [55,58,64,72,95,110,70,62,60,58,56,54,58,60,66,78,102,120,74,64,62,60,58,56]
+    },
+    {
+      "sku": "COLD-BREW",
+      "name": "Cold brew concentrate",
+      "unit": "bottle",
+      "category": "Beverage",
+      "on_hand": 60,
+      "unit_cost": 3.1,
+      "lead_time_days": 5,
+      "supplier": "In-house production",
+      "min_order_qty": 48,
+      "monthly_units": [240,230,170,120,90,80,75,80,110,160,220,280,300,290,200,140,100,85,82,88,120,175,240,310]
+    }
+  ]
+}

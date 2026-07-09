@@ -11,6 +11,7 @@ const load = (f) => JSON.parse(readFileSync(join(__dirname, "..", "data", f), "u
 const qb = load("quickbooks.json");
 const pp = load("paypal.json");
 const hs = load("hubspot.json");
+const inv = load("inventory.json");
 
 // In-memory "outbox": actions Claude proposes that a human must approve before
 // they actually send/post/pay. Nothing here touches the real world until approved.
@@ -49,6 +50,18 @@ export const connectors = {
     listLeads: ({ status } = {}) =>
       status ? hs.leads.filter((l) => l.status === status) : hs.leads,
     getCampaigns: () => hs.campaigns
+  },
+  inventory: {
+    connected: true,
+    historyStart: inv.history_start,
+    listProducts: () =>
+      inv.products.map(({ monthly_units, ...rest }) => rest),
+    getProduct: ({ sku } = {}) => inv.products.find((p) => p.sku === sku),
+    getSalesHistory: ({ sku } = {}) => {
+      const p = inv.products.find((x) => x.sku === sku);
+      return p ? { sku, unit: p.unit, history_start: inv.history_start, monthly_units: p.monthly_units } : { error: `Unknown sku ${sku}` };
+    },
+    all: () => inv.products
   }
 };
 
@@ -62,13 +75,22 @@ export const actions = {
     queueAction({ kind: "email", channel: "HubSpot", to: email,
       subject: `Reply to new lead ${name}`, summary: `Reply to lead ${name} (${lead_id})`, body }),
   createReport: ({ title, body }) =>
-    queueAction({ kind: "document", channel: "Report", summary: title, subject: title, body })
+    queueAction({ kind: "document", channel: "Report", summary: title, subject: title, body }),
+  draftPurchaseOrder: ({ sku, product, quantity, unit, supplier, needed_by, unit_cost, rationale }) =>
+    queueAction({
+      kind: "purchase_order", channel: supplier || "Supplier",
+      to: supplier,
+      subject: `PO: ${quantity} ${unit || "units"} of ${product} (${sku})`,
+      summary: `Order ${quantity} ${unit || "units"} of ${product}${needed_by ? ` by ${needed_by}` : ""}`,
+      body: `Purchase order\nProduct: ${product} (${sku})\nQuantity: ${quantity} ${unit || "units"}\nSupplier: ${supplier || "—"}\nNeeded by: ${needed_by || "—"}\nEst. cost: ${unit_cost ? "$" + (unit_cost * quantity).toFixed(2) : "—"}\n\nWhy: ${rationale || "—"}`
+    })
 };
 
 export function connectorStatus() {
   return [
     { id: "quickbooks", name: "Intuit QuickBooks", connected: connectors.quickbooks.connected, jobs: "Cash flow, invoices, month-end close" },
     { id: "paypal", name: "PayPal", connected: connectors.paypal.connected, jobs: "Settlements, disputes, refunds" },
-    { id: "hubspot", name: "HubSpot", connected: connectors.hubspot.connected, jobs: "Pipeline, leads, campaigns" }
+    { id: "hubspot", name: "HubSpot", connected: connectors.hubspot.connected, jobs: "Pipeline, leads, campaigns" },
+    { id: "inventory", name: "Inventory / Warehouse", connected: connectors.inventory.connected, jobs: "Stock levels, demand forecast, reorder plan" }
   ];
 }

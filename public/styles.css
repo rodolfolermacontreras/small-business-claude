@@ -138,6 +138,33 @@ h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: v
 .spark-bar.down { background: linear-gradient(180deg, #e0655f, #b8433d); }
 .spark-lbl { font-size: 10px; color: var(--muted); }
 
+/* Inventory outlook */
+.inv-table { display: flex; flex-direction: column; gap: 2px; }
+.inv-row {
+  display: grid; grid-template-columns: 1.6fr 1.5fr .7fr .9fr 1.2fr 1.9fr;
+  align-items: center; gap: 10px; padding: 8px 6px; border-radius: 8px; font-size: 12.5px;
+}
+.inv-row:not(.inv-headrow):hover { background: var(--tint); }
+.inv-headrow { font-size: 10px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); border-bottom: 1px solid var(--line); border-radius: 0; }
+.inv-name { display: flex; flex-direction: column; color: var(--ink); font-weight: 600; }
+.inv-name small { font-weight: 400; color: var(--muted); font-size: 10.5px; }
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+.inv-spark { display: flex; align-items: flex-end; gap: 2px; height: 26px; }
+.isp { width: 5px; background: var(--line); border-radius: 2px 2px 0 0; }
+.isp.fc { background: var(--accent); width: 7px; }
+.cover { display: flex; align-items: center; gap: 6px; }
+.cover-track { flex: 1; height: 8px; background: var(--tint); border-radius: 5px; overflow: hidden; }
+.cover-fill { display: block; height: 100%; border-radius: 5px; background: var(--ok); }
+.cover-fill.warn { background: var(--warn); }
+.cover-fill.muted { background: #6b8cc4; }
+.cover em { font-style: normal; color: var(--muted); font-size: 11px; min-width: 30px; }
+.inv-action { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.inv-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; white-space: nowrap; }
+.inv-badge.warn { background: color-mix(in srgb, var(--warn) 22%, transparent); color: var(--warn); }
+.inv-badge.ok { background: color-mix(in srgb, var(--ok) 20%, transparent); color: var(--ok); }
+.inv-badge.muted { background: color-mix(in srgb, #6b8cc4 22%, transparent); color: #6b8cc4; }
+.muted-txt { color: var(--muted); }
+
 .messages { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
 .welcome { max-width: 640px; margin: auto; text-align: center; color: var(--muted); }
 .welcome h2 { color: var(--ink); text-transform: none; letter-spacing: 0; font-size: 22px; }

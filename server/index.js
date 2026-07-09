@@ -5,6 +5,7 @@ import { dirname, join } from "node:path";
 import { runAgent, MODEL } from "./agent.js";
 import { workflows, findWorkflow } from "./workflows.js";
 import { connectors, connectorStatus, outbox } from "./connectors/index.js";
+import { optimizeAll } from "./optimizer.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -78,6 +79,12 @@ app.get("/api/metrics", (req, res) => {
 });
 
 app.get("/api/outbox", (req, res) => res.json(outbox));
+
+// Read-only inventory forecast + reorder plan for the dashboard visual.
+app.get("/api/inventory", (req, res) => {
+  const items = optimizeAll(connectors.inventory.all(), connectors.inventory.historyStart);
+  res.json({ history_start: connectors.inventory.historyStart, items });
+});
 
 app.post("/api/outbox/:id/approve", (req, res) => {
   const item = outbox.find((o) => o.id === req.params.id);

@@ -48,6 +48,14 @@ export const workflows = [
     category: "Sales",
     blurb: "Prioritize new leads and draft a first reply to each.",
     prompt: "Triage my new HubSpot leads. Rank them by likely value/fit based on their notes, then draft a warm, personalized first reply for each using draft_lead_reply. Finish with a short prioritized list telling me who to call first and why."
+  },
+  {
+    id: "inventory-optimizer",
+    title: "Optimize inventory & reorder",
+    icon: "📦",
+    category: "Operations",
+    blurb: "Forecast demand, flag stockout/overstock risk, and draft purchase orders.",
+    prompt: "Run an inventory reorder analysis. Call inv_optimize to get the demand forecast and reorder plan for every product. Present a clear table sorted by urgency (reorder_now first) with: product, on-hand, next-month forecast, reorder point, days of cover, and status. For EVERY product with a recommended_order_qty greater than 0, draft a purchase order with draft_purchase_order using the recommended order quantity, supplier, unit cost, unit, and order-by date, and give a one-line reason. Call out any 'overstock' items I should stop ordering. Finish with a short summary: how many POs you queued and the total purchase cost."
   }
 ];
 

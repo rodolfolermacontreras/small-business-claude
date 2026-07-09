@@ -65,9 +65,13 @@ const money = (n) => "$" + Math.round(n).toLocaleString();
 
 async function loadDashboard() {
   if (!els.dashboard) return;
-  let m;
-  try { m = await (await fetch("/api/metrics")).json(); }
-  catch { return; }
+  let m, inv;
+  try {
+    [m, inv] = await Promise.all([
+      (await fetch("/api/metrics")).json(),
+      (await fetch("/api/inventory")).json().catch(() => null)
+    ]);
+  } catch { return; }
 
   const tiles = [
     { label: "Cash available", value: money(m.cash_available), sub: `+${money(m.pending_incoming)} incoming`, cls: "ok" },
@@ -82,6 +86,45 @@ async function loadDashboard() {
   const flow = m.cash_flow || [];
   const maxAbs = Math.max(1, ...flow.map((f) => Math.abs(f.net)));
   const collapsed = localStorage.getItem("dashCollapsed") === "1";
+
+  // Inventory outlook card (forecast + reorder plan)
+  const statusMeta = {
+    reorder_now: { cls: "warn", label: "Reorder now" },
+    overstock: { cls: "muted", label: "Overstock" },
+    healthy: { cls: "ok", label: "Healthy" }
+  };
+  const invItems = inv && inv.items ? inv.items : [];
+  const invCard = invItems.length ? `
+    <div class="chart-card inv-card">
+      <div class="chart-title">Inventory outlook — demand forecast & reorder plan</div>
+      <div class="inv-table">
+        <div class="inv-row inv-headrow">
+          <span>Product</span><span>12-mo trend → forecast</span><span class="num">On hand</span>
+          <span class="num">Forecast/mo</span><span>Days of cover</span><span>Recommended order</span>
+        </div>
+        ${invItems.map((it) => {
+          const sm = statusMeta[it.status] || statusMeta.healthy;
+          const hist = it.history_recent || [];
+          const maxH = Math.max(1, ...hist, it.forecast_next_month);
+          const spark = hist.map((v) =>
+            `<span class="isp" style="height:${Math.max(2, Math.round((v / maxH) * 22))}px"></span>`).join("") +
+            `<span class="isp fc" style="height:${Math.max(2, Math.round((it.forecast_next_month / maxH) * 22))}px" title="Forecast next month: ${it.forecast_next_month}"></span>`;
+          const coverPct = Math.min(100, Math.round((it.days_of_cover / 90) * 100));
+          const order = it.recommended_order_qty > 0
+            ? `<b>${it.recommended_order_qty.toLocaleString()}</b> ${escapeHtml(it.unit)} · by ${it.order_by}`
+            : `<span class="muted-txt">—</span>`;
+          return `
+            <div class="inv-row">
+              <span class="inv-name">${escapeHtml(it.name)}<small>${escapeHtml(it.sku)} · ${escapeHtml(it.supplier)}</small></span>
+              <span class="inv-spark">${spark}</span>
+              <span class="num">${it.on_hand.toLocaleString()}</span>
+              <span class="num">${it.forecast_next_month.toLocaleString()}</span>
+              <span class="cover"><span class="cover-track"><span class="cover-fill ${sm.cls}" style="width:${coverPct}%"></span></span><em>${it.days_of_cover}d</em></span>
+              <span class="inv-action"><span class="inv-badge ${sm.cls}">${sm.label}</span> ${order}</span>
+            </div>`;
+        }).join("")}
+      </div>
+    </div>` : "";
 
   els.dashboard.innerHTML = `
     <div class="dash-head">
@@ -125,8 +168,7 @@ async function loadDashboard() {
             }).join("")}
           </div>
         </div>` : ""}
-      </div>
-    </div>
+      </div>      ${invCard}    </div>
   `;
 
   els.dashboard.classList.toggle("collapsed", collapsed);
