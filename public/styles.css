@@ -102,6 +102,13 @@ h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: v
 /* Dashboard */
 .dashboard { padding: 16px 24px 0; display: flex; flex-direction: column; gap: 14px; }
 .dashboard:empty { display: none; }
+.dash-head { display: flex; align-items: center; justify-content: space-between; }
+.dash-title { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; }
+.dash-toggle { border: 1px solid var(--line); background: var(--panel); color: var(--muted); width: 26px; height: 22px; border-radius: 7px; cursor: pointer; font-size: 11px; line-height: 1; }
+.dash-toggle:hover { border-color: var(--accent); color: var(--ink); }
+.dash-body { display: flex; flex-direction: column; gap: 14px; }
+.dashboard.collapsed .dash-body { display: none; }
+.chart-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
 .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
 .kpi {
   background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
@@ -122,6 +129,14 @@ h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: v
 .bar-track { background: var(--tint); border-radius: 6px; height: 16px; overflow: hidden; }
 .bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-ink)); border-radius: 6px; width: 0; transition: width .6s ease; }
 .bar-row .bar-val { text-align: right; font-weight: 600; color: var(--accent-ink); }
+
+/* Sparkline (cash movement) */
+.spark { display: flex; align-items: flex-end; gap: 10px; height: 78px; padding-top: 6px; }
+.spark-col { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; justify-content: flex-end; height: 100%; }
+.spark-bar { width: 60%; max-width: 34px; border-radius: 4px 4px 0 0; }
+.spark-bar.up { background: linear-gradient(180deg, var(--ok), color-mix(in srgb, var(--ok) 70%, #000)); }
+.spark-bar.down { background: linear-gradient(180deg, #e0655f, #b8433d); }
+.spark-lbl { font-size: 10px; color: var(--muted); }
 
 .messages { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
 .welcome { max-width: 640px; margin: auto; text-align: center; color: var(--muted); }

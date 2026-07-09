@@ -57,6 +57,11 @@ app.get("/api/metrics", (req, res) => {
     roi: c.cost > 0 ? +((c.revenue - c.cost) / c.cost).toFixed(2) : null
   }));
 
+  // Recent cash movement from PayPal settlements (real dated data)
+  const cashFlow = [...settlements]
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .map((s) => ({ date: s.date, net: +s.net.toFixed(2), note: s.note }));
+
   res.json({
     cash_available: balance.available,
     accounts_receivable: receivable,
@@ -67,7 +72,8 @@ app.get("/api/metrics", (req, res) => {
     pipeline_weighted: pipelineWeighted,
     open_deals: openDeals.length,
     disputes_open: disputes.filter((d) => d.status !== "resolved").length,
-    campaigns
+    campaigns,
+    cash_flow: cashFlow
   });
 });
 

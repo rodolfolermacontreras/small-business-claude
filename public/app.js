@@ -79,28 +79,63 @@ async function loadDashboard() {
   const campaigns = (m.campaigns || []).filter((c) => c.roi !== null);
   const maxRoi = Math.max(1, ...campaigns.map((c) => c.roi));
 
+  const flow = m.cash_flow || [];
+  const maxAbs = Math.max(1, ...flow.map((f) => Math.abs(f.net)));
+  const collapsed = localStorage.getItem("dashCollapsed") === "1";
+
   els.dashboard.innerHTML = `
-    <div class="kpi-row">
-      ${tiles.map((t) => `
-        <div class="kpi ${t.cls}">
-          <span class="kpi-label">${t.label}</span>
-          <span class="kpi-value">${t.value}</span>
-          <span class="kpi-sub">${t.sub}</span>
-        </div>`).join("")}
+    <div class="dash-head">
+      <span class="dash-title">Business overview</span>
+      <button id="dashToggle" class="dash-toggle" title="Show/hide">${collapsed ? "▸" : "▾"}</button>
     </div>
-    ${campaigns.length ? `
-    <div class="chart-card">
-      <div class="chart-title">Campaign ROI (return per $1 spent)</div>
-      <div class="bars">
-        ${campaigns.map((c) => `
-          <div class="bar-row">
-            <span class="bar-name" title="${escapeHtml(c.name)}">${escapeHtml(c.name)}</span>
-            <div class="bar-track"><div class="bar-fill" data-w="${Math.round((c.roi / maxRoi) * 100)}"></div></div>
-            <span class="bar-val">${c.roi.toFixed(1)}×</span>
+    <div class="dash-body">
+      <div class="kpi-row">
+        ${tiles.map((t) => `
+          <div class="kpi ${t.cls}">
+            <span class="kpi-label">${t.label}</span>
+            <span class="kpi-value">${t.value}</span>
+            <span class="kpi-sub">${t.sub}</span>
           </div>`).join("")}
       </div>
-    </div>` : ""}
+      <div class="chart-grid">
+        ${campaigns.length ? `
+        <div class="chart-card">
+          <div class="chart-title">Campaign ROI (return per $1 spent)</div>
+          <div class="bars">
+            ${campaigns.map((c) => `
+              <div class="bar-row">
+                <span class="bar-name" title="${escapeHtml(c.name)}">${escapeHtml(c.name)}</span>
+                <div class="bar-track"><div class="bar-fill" data-w="${Math.round((c.roi / maxRoi) * 100)}"></div></div>
+                <span class="bar-val">${c.roi.toFixed(1)}×</span>
+              </div>`).join("")}
+          </div>
+        </div>` : ""}
+        ${flow.length ? `
+        <div class="chart-card">
+          <div class="chart-title">Recent cash movement (PayPal)</div>
+          <div class="spark">
+            ${flow.map((f) => {
+              const h = Math.max(6, Math.round((Math.abs(f.net) / maxAbs) * 46));
+              const pos = f.net >= 0;
+              const label = f.date.slice(5);
+              return `<div class="spark-col" title="${escapeHtml(f.note)}: ${pos ? "+" : "-"}${money(Math.abs(f.net))}">
+                <div class="spark-bar ${pos ? "up" : "down"}" style="height:${h}px"></div>
+                <span class="spark-lbl">${label}</span>
+              </div>`;
+            }).join("")}
+          </div>
+        </div>` : ""}
+      </div>
+    </div>
   `;
+
+  els.dashboard.classList.toggle("collapsed", collapsed);
+  document.getElementById("dashToggle")?.addEventListener("click", () => {
+    const nowCollapsed = !els.dashboard.classList.contains("collapsed");
+    els.dashboard.classList.toggle("collapsed", nowCollapsed);
+    localStorage.setItem("dashCollapsed", nowCollapsed ? "1" : "0");
+    document.getElementById("dashToggle").textContent = nowCollapsed ? "▸" : "▾";
+  });
 
   // Animate bars after layout
   requestAnimationFrame(() =>
