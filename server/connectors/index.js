@@ -4,6 +4,7 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { insertOutboxItem, listOutbox, maxOutboxSeq } from "../db.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const load = (f) => JSON.parse(readFileSync(join(__dirname, "..", "data", f), "utf8"));
@@ -13,14 +14,17 @@ const pp = load("paypal.json");
 const hs = load("hubspot.json");
 const inv = load("inventory.json");
 
-// In-memory "outbox": actions Claude proposes that a human must approve before
-// they actually send/post/pay. Nothing here touches the real world until approved.
-export const outbox = [];
-let outboxSeq = 1;
+// "Outbox": actions Claude proposes that a human must approve before they actually
+// send/post/pay. Nothing here touches the real world until approved. The array is
+// hydrated from SQLite on startup and every new draft is persisted, so drafts survive
+// restarts. The DB is the source of truth on read; this array mirrors it in-process.
+export const outbox = listOutbox();
+let outboxSeq = maxOutboxSeq() + 1;
 
 function queueAction(action) {
   const item = { id: `ACT-${outboxSeq++}`, status: "pending_approval", created: new Date().toISOString(), ...action };
   outbox.push(item);
+  insertOutboxItem(item);
   return item;
 }
 
