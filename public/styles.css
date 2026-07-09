@@ -13,20 +13,20 @@
   --tint: #faf8f5;
   --chip: #f3e6e0;
 }
-/* Dark theme — same variable names, swapped values */
+/* Dark theme — clean high-contrast slate (not brown) */
 body.dark {
-  --bg: #1c1a17;
-  --panel: #26241f;
-  --ink: #f2efe9;
-  --muted: #a29b8f;
-  --line: #3a362f;
-  --accent: #e0866a;
-  --accent-ink: #f0a488;
-  --ok: #43b982;
-  --warn: #e0a444;
-  --shadow: 0 1px 3px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
-  --tint: #2f2c26;
-  --chip: #3a2e28;
+  --bg: #14161b;
+  --panel: #1d2028;
+  --ink: #f4f6f9;
+  --muted: #a3abb8;
+  --line: #2c313b;
+  --accent: #e88a6b;
+  --accent-ink: #f4b199;
+  --ok: #48c78e;
+  --warn: #e3a94a;
+  --shadow: 0 1px 3px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.35);
+  --tint: #262b34;
+  --chip: #33383f;
 }
 * { box-sizing: border-box; }
 body {
