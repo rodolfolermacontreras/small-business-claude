@@ -44,12 +44,24 @@ _(none)_
 ---
 
 ## Backlog (not started — need a task brief before pickup)
-| Priority | Item | Notes |
-|----------|------|-------|
-| — | Wire one REAL connector | e.g. live email send on approval |
-| — | Better forecast models | Holt-Winters/trend behind same `inv_optimize` interface |
-| — | More workflows | tax-season organizer, contract reviewer, margin analyzer |
-| — | Streaming / SSE chat | progressive responses in the UI |
+
+> **Reframed 2026-07-09:** goal is a **sellable product for real small-business owners**, not a
+> personal tool. Full gap analysis in `docs/PRODUCT_ROADMAP.md`. Backlog now tracks productization
+> themes. Pending the business-model decision (hosted SaaS vs self-host/white-label).
+
+| Theme | Item | Notes |
+|-------|------|-------|
+| T1 Integrations | Real outbound email on approval | Smallest real connector; most convincing; first real-secret pattern |
+| T1 Integrations | QuickBooks / PayPal / HubSpot OAuth | Replace mock bodies; keep tool interface stable |
+| T3 Security | Encrypted connector creds, audit log, prompt-injection wrapping | Before handling real financial data |
+| T2 Tenancy | Accounts, login, per-tenant data isolation | Structural leap demo -> product |
+| T4 Reliability | LLM retries/fallback, per-tenant cost budgets/metering | Protects UX + margins |
+| T5 Billing | Subscriptions (Stripe), plans, entitlements | Monetization |
+| T6 Deploy/Ops | Cloud hosting, CI/CD, observability, secrets vault | Off localhost |
+| T7 Onboarding | Connect-accounts flow, customizable workflows/branding | Conversion + framework angle |
+| T8 Legal | ToS, Privacy, DPA, GDPR/CCPA export/delete | Required to charge for financial tooling |
+| Enhancement | Better forecast models | Holt-Winters/trend behind same `inv_optimize` interface |
+| Enhancement | Streaming / SSE chat | progressive responses in the UI |
 
 ---
 
