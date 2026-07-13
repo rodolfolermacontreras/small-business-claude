@@ -1,0 +1,55 @@
+{
+  "schema_version": "2.0",
+  "packs": [
+    {
+      "id": "frontend",
+      "members": ["htmx-frontend", "testing-conventions", "git-workflow"],
+      "lifecycle": "retired",
+      "host_scope": "reference-example",
+      "provenance": "day-to-day-agent",
+      "compatibility": { "status": "incompatible", "target": "small-business-claude", "notes": "HTMX/Jinja2, pytest, and stale Git policy conflict with the plain-JavaScript host." },
+      "activation": { "status": "inactive", "mode": "explicit-manifest", "dependencies": [] },
+      "replacement": null
+    },
+    {
+      "id": "backend",
+      "members": ["fastapi-routes", "testing-conventions", "git-workflow"],
+      "lifecycle": "retired",
+      "host_scope": "reference-example",
+      "provenance": "day-to-day-agent",
+      "compatibility": { "status": "incompatible", "target": "small-business-claude", "notes": "FastAPI/Pydantic, pytest, and stale Git policy conflict with Express 5." },
+      "activation": { "status": "inactive", "mode": "explicit-manifest", "dependencies": [] },
+      "replacement": null
+    },
+    {
+      "id": "full-stack",
+      "members": ["tdd", "diagnose", "code-review", "improve-architecture", "pytest-runner", "fastapi-routes", "htmx-frontend"],
+      "lifecycle": "retired",
+      "host_scope": "reference-example",
+      "provenance": "day-to-day-agent",
+      "compatibility": { "status": "incompatible", "target": "small-business-claude", "notes": "Contains Day-to-Day Python/FastAPI/pytest/HTMX guidance and no host-valid replacement exists." },
+      "activation": { "status": "inactive", "mode": "explicit-manifest", "dependencies": [] },
+      "replacement": null
+    },
+    {
+      "id": "planning",
+      "members": ["to-spec", "to-plan", "to-tasks", "triage", "pi-planning"],
+      "lifecycle": "inactive",
+      "host_scope": "framework-process",
+      "provenance": "adopted-sdd-framework",
+      "compatibility": { "status": "conditional", "target": "small-business-claude", "notes": "Pack remains inactive: to-spec/to-plan/to-tasks contain Day-to-Day examples, triage is discovery-gated, and pi-planning requires governance review." },
+      "activation": { "status": "unavailable", "mode": "explicit-manifest", "dependencies": ["member-by-member host review", "customer-discovery gate", "PM authorization"] },
+      "replacement": null
+    },
+    {
+      "id": "review",
+      "members": ["code-review", "tdd", "testing-conventions"],
+      "lifecycle": "retired",
+      "host_scope": "reference-example",
+      "provenance": "day-to-day-agent",
+      "compatibility": { "status": "incompatible", "target": "small-business-claude", "notes": "Python/pytest and Day-to-Day review guidance is inactive pending R1-T15 and Sprint 2 test mechanics." },
+      "activation": { "status": "inactive", "mode": "explicit-manifest", "dependencies": ["R1-T15", "Sprint 2 test contract"] },
+      "replacement": null
+    }
+  ]
+}

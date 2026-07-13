@@ -1,167 +1,97 @@
-# Kick-Off — Claude for Small Business (Multi-Agent Operating Model)
+# Kick-Off — Small-Business-Claude Operating Model
 
-This is the **entry point** for every session working on this project. Read it first.
-It defines *who does what*, the *current status*, and *how work is handed off* between the
-high-level PM agent and the worker agents.
+This is the concise entry point for assigning and executing bounded work.
 
----
+## Product Context
 
-## 0. TL;DR
+Keep three layers distinct:
 
-- **PM agent** (the orchestrator session): owns the big picture. Writes task briefs, tracks
-  status, reviews results. **Does NOT write feature code.**
-- **Worker agents** (other VS Code sessions): each picks up **one task brief** from
-  `docs/tasks/`, implements it, verifies, commits, and reports back.
-- Everything is coordinated through **documents in `docs/`** — not shared memory. This keeps
-  each agent's context clean and prevents "context poisoning."
+1. **Current implementation:** a working local, single-user demo with the Anthropic API, a
+   plain-JavaScript UI, and local SQLite persistence for chat sessions and approval-outbox
+   drafts. It has exactly seven ready-to-run workflows and exactly four mock domains:
+   QuickBooks, PayPal, HubSpot, and inventory.
+2. **Future target:** hosted SaaS for real small-business owners, with an approved beachhead
+   direction of inventory-based businesses in El Paso, Texas, and Ciudad Juarez, Mexico,
+   beginning with coffee shops and flooring, wall-material, and related
+   building/interior-finish wholesalers. The target is not built or committed to the backlog.
+3. **Immediate gate:** customer discovery must validate the beachhead problem,
+   first-customer profile, shared MVP jobs, source systems, language needs, and willingness
+   to pay before product backlog commitment or implementation. Discovery is incomplete.
 
----
+No role may claim customer validation or SaaS completion.
 
-## 1. Roles
+## Roles and Handoff
 
-### 1.1 PM / Orchestrator agent (this role)
-- Maintains the big-picture view of the project and roadmap.
-- Turns a discussed idea into a **task brief** (`docs/tasks/TASK-###-<slug>.md`) that a worker
-  can execute standalone.
-- Keeps `docs/PROJECT_STATUS.md` current (what's done, in-flight, blocked, next).
-- Reviews worker output (reads diffs / summaries), updates status, decides what's next.
-- **Guardrail:** does not implement sprints or features. No deep-diving into feature code.
-  This avoids polluting the PM context with implementation detail. If the PM must inspect code,
-  it reads, it does not edit.
+- **Executive Manager:** human-facing routing, status, and escalation.
+- **Product Manager:** backlog, priorities, acceptance criteria, and self-contained briefs.
+- **Architect:** approved technical decisions, specifications, and pattern governance.
+- **Software Developer:** translates approved specifications into bounded tasks, dispatches
+  workers, and integrates reviewed work.
+- **Worker:** executes one assigned brief within its exact allowlist and reports evidence.
 
-### 1.2 Worker agent
-- Reads `docs/AGENT_ONBOARDING.md` (technical onboarding) + the **one** assigned task brief.
-- Implements only what's in the brief. Asks the PM (via the human) before expanding scope.
-- Verifies end-to-end (restart server, hit endpoints / open the UI) before claiming done.
-- Commits + pushes with a clear message, then reports: what changed, files touched, verification
-  output, commit SHA, and any follow-ups.
+The lifecycle is:
 
----
+`IDEA -> BACKLOG -> CLARIFY -> SPEC -> PLAN -> TASKS -> IMPLEMENT -> REVIEW -> DONE`
 
-## 2. The handoff protocol
+One worker receives one self-contained task. The brief must provide the task, acceptance
+criteria, constraints, exact file allowlist, and authorized validation. Overlapping file scopes
+run sequentially. Workers stop rather than broaden scope when a blocker requires another file,
+dependency, schema, contract, permission, or architecture decision.
 
-```
-Idea (PM + human discuss)
-      |
-      v
-PM writes docs/tasks/TASK-###-<slug>.md   (from TASK_BRIEF_TEMPLATE.md)
-      |
-      v
-Human opens a NEW VS Code session (worker) and pastes the worker kick-off prompt (§5)
-      |
-      v
-Worker implements -> verifies -> commits/pushes -> reports summary
-      |
-      v
-PM reads the summary/diff, updates docs/PROJECT_STATUS.md, marks task Done
-```
+## Current API Contract
 
-**Rules that keep this clean:**
-- **One task = one worker session.** Don't give a worker two briefs at once.
-- **One area per active worker.** If two briefs touch the same files (e.g. both edit
-  `server/index.js`), run them sequentially, not in parallel — merge conflicts otherwise.
-- Every brief is **self-contained**: it states the goal, the files in scope, the files
-  out of scope, the acceptance checks, and the verification steps. A worker should never need
-  to read other task briefs.
-- Workers **pull latest `main`** before starting and **push** when done.
+The demo exposes exactly eight routes:
 
----
+- `GET /api/health`
+- `GET /api/config`
+- `GET /api/metrics`
+- `GET /api/outbox`
+- `GET /api/inventory`
+- `POST /api/outbox/:id/approve`
+- `POST /api/chat`
+- `POST /api/reset`
 
-## 3. Current status (snapshot — live version in docs/PROJECT_STATUS.md)
+## Protected Product Invariants
 
-**Product:** local full-stack demo — small-business AI copilot on the real Claude API.
-Node.js (ES modules, no build step), Express, vanilla frontend. Model
-`claude-haiku-4-5-20251001`.
+- Anything that would send, post, pay, or place an order stays as a draft in the approval
+  outbox pending explicit owner approval; approval currently has no real external side effect.
+- The connector/tool contract stays stable unless separately specified and approved.
+- Financial, inventory, and optimization calculations stay deterministic and server-side;
+  the model may explain them but cannot invent or replace them.
+- Secrets stay only in `.env` and never enter Git, logs, evidence, or the browser.
 
-**Built & verified:**
-- Chat with tool-use agentic loop; human-in-the-loop approval outbox.
-- 4 connectors: QuickBooks, PayPal, HubSpot, Inventory/Warehouse (mock JSON, real API shapes).
-- 15 tools, 7 ready-to-run workflows.
-- Dashboard: KPI tiles, campaign ROI, cash-movement sparkline, collapsible inventory outlook card.
-- Inventory optimizer: 24-mo mock history -> seasonal forecast + reorder plan + draft POs.
-- Endpoints: `/api/health`, `/api/config`, `/api/chat`, `/api/outbox`, `/api/outbox/:id/approve`,
-  `/api/reset`, `/api/metrics`, `/api/inventory`.
+## Git Policy
 
-**Not yet built (backlog):** SQLite persistence, a real live connector, better forecast models,
-more workflows, streaming/SSE chat.
+`main` is protected by policy. Authorized changes use short-lived branches and may enter
+`main` only through a pull request after required checks pass. Direct commits to `main` are
+prohibited. This policy does not itself authorize branch changes, staging, commits, pushes,
+pull requests, merges, or rebases.
 
-**Known constraints:** state is in-memory (resets on restart); private npm feed quirk (local
-`.npmrc` points at npmjs.org); `.env` holds the API key and is git-ignored — never commit it.
+Git-hosting branch protection, host tests, continuous integration, and required pull-request
+checks are not configured or mechanically validated. Compliance is procedural. Sprint 2 owns
+enforcement work if separately authorized.
 
----
+## Sprint 2 Readiness Deferrals
 
-## 4. Where things live
+- Select and add an `npm test` host runner and an automated `GET /api/health` smoke test.
+- Add host CI and required pull-request checks.
+- Mechanically validate the owner-approved Node.js `>=24` policy and align package metadata;
+  `package.json` remains `>=18`, and the policy statement is not validation evidence.
+- Make state-builder and doctor host-aware.
+- Verify ledger and work-index behavior.
+- Run a clean-clone final-readiness rehearsal.
 
-| Doc | Purpose | Owner |
-|-----|---------|-------|
-| `docs/KICK_OFF.md` | This file — operating model + entry point | PM |
-| `docs/PROJECT_STATUS.md` | Live status board (done / in-flight / blocked / next) | PM |
-| `docs/AGENT_ONBOARDING.md` | Technical onboarding for workers (file map, run steps, principles) | PM (keeps current) |
-| `docs/tasks/TASK_BRIEF_TEMPLATE.md` | Template for new task briefs | PM |
-| `docs/tasks/TASK-###-<slug>.md` | One brief per feature/fix handed to a worker | PM writes, worker executes |
-| `README.md` | Product overview + go-live guide | shared |
+Until these checks pass, the repository is not fully ready for SDD execution, CI, validated
+runtime alignment, clean-clone use, or automated branch-protection enforcement.
 
----
+## Worker Handoff
 
-## 5. Worker kick-off prompt (copy-paste into a NEW session)
+Before editing, the worker reads this file, `docs/AGENT_ONBOARDING.md`, and the assigned brief.
+The worker then:
 
-> Replace `TASK-###-<slug>.md` with the actual brief filename. Everything else stays as-is.
+1. confirms the exact allowlist and checks for overlap;
+2. makes the smallest authorized change while preserving current contracts;
+3. performs only the validation authorized by the brief;
+4. reports summary, every changed file, observed validation, unavailable checks, and concerns.
 
-```
-You are a WORKER agent on the "Claude for Small Business" project.
-
-Repo: C:\Training\Projects\Small-Business-Claude  (Windows / PowerShell, backslash paths)
-Git: branch main, remote origin on GitHub. Pull latest before you start; commit + push when done.
-
-BEFORE WRITING ANY CODE, read these in order and tell me your understanding:
-  1. docs/KICK_OFF.md          (operating model — you are a worker, not the PM)
-  2. docs/AGENT_ONBOARDING.md  (technical onboarding: file map, how to run, design principles)
-  3. docs/tasks/TASK-###-<slug>.md   <-- YOUR ONLY TASK. Do exactly this, nothing more.
-
-HARD RULES:
-  - Implement ONLY what your task brief specifies. If you think scope should grow, STOP and ask me.
-  - Do not touch files listed as "out of scope" in the brief.
-  - Preserve the core design principles (human-in-the-loop outbox; stable connector interface;
-    all math is server-side deterministic — the LLM explains, it never computes numbers;
-    no build step; must "just run" with npm start).
-  - Never print, commit, or expose the API key. .env is git-ignored — never stage it.
-  - Verify end-to-end (restart `npm start`, hit the endpoints / open http://localhost:3000)
-    BEFORE claiming done.
-
-WHEN DONE, report back:
-  - What you implemented
-  - Files changed (and confirm none were out of scope)
-  - Verification output (endpoint responses / what you saw in the UI)
-  - Commit SHA(s)
-  - Any follow-ups or risks for the PM
-
-Start by reading the three docs above, then summarize the task in your own words and your plan
-before coding.
-```
-
----
-
-## 6. PM re-entry prompt (to resume the orchestrator in a fresh PM session)
-
-```
-You are the PM / ORCHESTRATOR agent for "Claude for Small Business"
-(C:\Training\Projects\Small-Business-Claude).
-
-Read docs/KICK_OFF.md and docs/PROJECT_STATUS.md to reload the big picture.
-
-Your job: keep the roadmap and status current, turn ideas into self-contained task briefs in
-docs/tasks/ (use TASK_BRIEF_TEMPLATE.md), and review worker results. You do NOT implement
-features or sprints yourself — that keeps your context clean. If you need to understand code,
-read it; do not edit it.
-
-Tell me the current status and what you recommend we tackle next.
-```
-
----
-
-## 7. Definition of done (per task)
-- Acceptance checks in the brief all pass.
-- Server starts clean; affected endpoints/UI verified.
-- No out-of-scope files changed; no API key exposed.
-- Committed + pushed to `main` with a clear message.
-- Worker reported summary; PM updated `docs/PROJECT_STATUS.md`.
+No readiness, test, CI, customer-discovery, or SaaS-completion claim may exceed direct evidence.
