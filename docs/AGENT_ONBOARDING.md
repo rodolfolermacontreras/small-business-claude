@@ -1,97 +1,82 @@
-# Agent Onboarding — Claude for Small Business
+# Agent Onboarding — Small-Business-Claude
 
-You are joining an in-progress project. Read this fully before doing anything.
+Use this concise technical baseline before executing an approved task brief.
 
-## PROJECT
-"Claude for Small Business" — a local, runnable full-stack web app that gives small-business
-owners an AI copilot powered by the real Anthropic Claude API. It is inspired by Anthropic's
-product of the same name (connectors + ready-to-run agentic workflows), but it is an
-INDEPENDENT demo app, not Anthropic's actual product. It runs entirely on the user's Windows
-machine.
+## Product Layers
 
-## LOCATION & ENVIRONMENT
-- Repo root: `C:\Training\Projects\Small-Business-Claude`
-- Git: initialized, branch `main`, remote `origin` ->
-  `https://github.com/rodolfolermacontreras/small-business-claude.git`. Commit + push after each
-  verified change.
-- OS: Windows. Use PowerShell and Windows-style backslash paths.
-- Runtime: Node.js v24 (ES modules, `"type":"module"`), no build step.
-- **IMPORTANT npm quirk:** the user's global npm registry is a Microsoft private feed that
-  requires auth and fails with E401. This project has a local `.npmrc` pointing at
-  `https://registry.npmjs.org/` so `npm install` works. Keep that `.npmrc`; if installs fail,
-  add `--registry=https://registry.npmjs.org/`.
+1. **Current implementation:** a working local, single-user demo on the owner's machine. It
+   uses the Anthropic API, a plain-JavaScript browser UI, and local SQLite persistence for
+   chat sessions and approval-outbox drafts.
+2. **Future target:** a hosted SaaS product for real small-business owners. The approved
+   beachhead direction is inventory-based businesses in El Paso, Texas, and Ciudad Juarez,
+   Mexico, beginning with coffee shops and flooring, wall-material, and related
+   building/interior-finish wholesalers. This target is not built or committed to the backlog.
+3. **Immediate gate:** customer discovery must validate the beachhead problem,
+   first-customer profile, shared MVP jobs, source systems, language needs, and willingness
+   to pay before product backlog commitment or implementation. Discovery is incomplete.
 
-## HOW TO RUN
-```powershell
-cd C:\Training\Projects\Small-Business-Claude
-npm install        # first time only
-npm start          # starts server on http://localhost:3000
-```
-Health check: `GET http://localhost:3000/api/health` -> `{"ok":true,...}`
+Do not claim customer validation or SaaS completion.
 
-The user's Claude API key is already in `.env` (`ANTHROPIC_API_KEY`). `CLAUDE_MODEL` is currently
-`claude-haiku-4-5-20251001` (fast/cheap for testing; swap to a Sonnet model for harder reasoning).
-**NEVER print, commit, or share the key.** `.env` is git-ignored.
+## Current Technical Baseline
 
-## FILE MAP — read these in this order to get oriented
-1. `README.md` — full overview, run steps, go-live guide, API reference
-2. `server/index.js` — Express server + all API routes (chat, outbox, config, health, reset)
-3. `server/agent.js` — the agentic loop: sends convo to Claude, executes tool calls, feeds
-   results back, loops until final answer. System prompt lives here.
-4. `server/tools.js` — 15 tool definitions (Anthropic tool-use schema) + dispatcher mapping
-   tool name -> connector/action function
-5. `server/connectors/index.js` — mock QuickBooks/PayPal/HubSpot/Inventory read functions + the
-   human-in-the-loop "outbox" (draft actions that need owner approval before they'd send)
-6. `server/optimizer.js` — dependency-free demand forecast + reorder math (seasonal index +
-   moving average). All inventory numbers are computed here, server-side.
-7. `server/workflows.js` — the 7 ready-to-run workflow prompts (id, title, icon, category, prompt)
-8. `server/data/*.json` — mock business data (`quickbooks.json`, `paypal.json`, `hubspot.json`,
-   `inventory.json`) for a fictional coffee roaster "Riverside Roasters". These mimic real API shapes.
-9. `public/index.html` — owner-facing UI (dashboard + 3 panes: connectors+workflows sidebar, chat, approvals)
-10. `public/app.js` — frontend logic (calls the API, renders dashboard, chat markdown, workflow cards, outbox)
-11. `public/styles.css` — styling (warm palette, high-contrast slate dark mode)
+- ES modules, Express 5, `@anthropic-ai/sdk`, `dotenv`, built-in `node:sqlite`, and plain
+  HTML/CSS/JavaScript; no build step.
+- Exactly seven ready-to-run workflows.
+- Exactly four mock connector domains: QuickBooks, PayPal, HubSpot, and inventory.
+- Exactly eight API routes:
+  - `GET /api/health`
+  - `GET /api/config`
+  - `GET /api/metrics`
+  - `GET /api/outbox`
+  - `GET /api/inventory`
+  - `POST /api/outbox/:id/approve`
+  - `POST /api/chat`
+  - `POST /api/reset`
 
-## ARCHITECTURE / DATA FLOW
-```
-UI (public/app.js) -> POST /api/chat {message | workflowId}
-  -> server/index.js getSession() -> runAgent() in agent.js
-  -> Claude decides to call tools (e.g. qb_list_invoices) -> tools.js runTool() -> connectors/index.js
-  -> results fed back to Claude -> Claude writes final answer + may call draft_* / create_report,
-     which QUEUE items into the in-memory `outbox` (nothing is actually sent/paid)
-  -> UI shows the reply, the tool steps, and pending drafts in "Needs your approval"
-  -> POST /api/outbox/:id/approve marks a draft approved (this is where real send/pay logic would go)
-```
+## File Map
 
-## KEY DESIGN PRINCIPLES (preserve these)
-- **Human-in-the-loop:** anything that would send/post/pay MUST go through a `draft_*`/`create_report`
-  tool and land in the outbox. The agent must never claim it actually sent something.
-- **Connector interface stability:** to go live, replace a mock function body in
-  `connectors/index.js` with a real authenticated API call WITHOUT changing the tool interface.
-  See README "Going live".
-- **No build step**, dependency-light, must "just run" with `npm start`.
+- `server/index.js`: Express server and API routes.
+- `server/agent.js`: Anthropic agent loop.
+- `server/tools.js`: tool definitions and dispatcher.
+- `server/workflows.js`: seven ready-to-run workflow prompts.
+- `server/db.js`: local SQLite sessions and approval-outbox drafts.
+- `server/optimizer.js`: deterministic inventory calculations.
+- `server/connectors/index.js`: connector contract and mock implementations.
+- `server/data/*.json`: mock data for the four connector domains.
+- `public/index.html`, `public/styles.css`, `public/app.js`: no-build browser UI.
 
-## CURRENT STATE (verified working end-to-end)
-- Health, `/api/config`, `/api/chat` (tool-use), `/api/outbox`, approve, `/api/reset`,
-  `/api/metrics`, `/api/inventory` all work.
-- 4 connectors (QuickBooks, PayPal, HubSpot, Inventory/Warehouse), 15 tools, 7 workflows.
-- Dashboard: KPI tiles + campaign ROI + cash sparkline + inventory outlook card (collapsible).
-- Inventory optimizer: 24 months of mock sales history -> seasonal forecast + reorder plan;
-  BAG-12 flags `reorder_now`; POs draft into the approval outbox via the 📦 workflow.
-- State is IN-MEMORY only (sessions + outbox reset on server restart). No DB yet.
+## Protected Product Invariants
 
-## ROADMAP / BACKLOG (see docs/PROJECT_STATUS.md for the live version)
-- SQLite persistence for chats + outbox (survive restarts).
-- Wire a REAL connector (e.g. live email send on approval, real PayPal/QuickBooks/Google Workspace).
-- Better forecast models (Holt-Winters / trend) behind the same `inv_optimize` tool interface.
-- More workflows: tax-season organizer, contract reviewer, margin analyzer.
-- Add streaming responses / SSE to the chat UI.
-> Do NOT start a backlog item without a task brief from the PM. See docs/KICK_OFF.md.
+- Anything that would send, post, pay, or place an order remains a draft in the approval
+  outbox until explicit owner approval; approval has no real external side effect today.
+- The connector/tool contract remains stable unless a separately approved task changes it.
+- Financial, inventory, and optimization calculations remain deterministic server-side
+  operations. The model may explain results but must not invent or replace calculations.
+- Secrets remain only in `.env` and never enter Git, logs, evidence, or browser code.
 
-## GROUND RULES
-- Windows/PowerShell, backslash paths. Keep the local `.npmrc`.
-- Make surgical changes; verify by restarting `npm start` and hitting the endpoints / opening
-  http://localhost:3000 before claiming done.
-- Do not expose or commit the API key.
+## Git and Work Rules
 
-Start by reading `README.md`, `server/index.js`, `server/agent.js`, and `server/tools.js`, then
-tell me what you understand and what you'd change for the task given next.
+`main` is protected by policy. Use short-lived branches; changes may enter `main` only by a
+pull request after required checks pass. Direct commits to `main` are prohibited. Git-hosting
+branch protection, host tests, continuous integration, and required pull-request checks are
+not configured or mechanically validated. Compliance is procedural until Sprint 2 implements
+and validates enforcement. A task brief must explicitly authorize any Git mutation.
+
+Make only the changes allowed by the assigned brief. Preserve brownfield conventions and the
+invariants above. Never infer permission to stage, commit, push, merge, rebase, or alter a
+branch.
+
+## Sprint 2 Readiness Deferrals
+
+The following work is deferred and requires separate authorization:
+
+- select and add an `npm test` host runner plus an automated `GET /api/health` smoke test;
+- add host CI and required pull-request checks;
+- mechanically validate the owner-approved Node.js `>=24` runtime policy and align package
+  metadata; `package.json` still declares `>=18`, and policy is not validation evidence;
+- make state-builder and doctor behavior host-aware;
+- verify ledger and work-index behavior;
+- complete a clean-clone final-readiness rehearsal.
+
+Until those checks pass, do not claim full SDD, CI, runtime, clean-clone, or automated
+branch-protection readiness.

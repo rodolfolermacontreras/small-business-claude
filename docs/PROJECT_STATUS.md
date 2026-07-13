@@ -1,20 +1,42 @@
-# Project Status — Claude for Small Business
+# Project Status — Small-Business-Claude
 
-**Maintained by the PM agent. Update after every task.**
-Last updated: 2026-07-09
+Last updated: 2026-07-10
 
----
+## Current Snapshot
 
-## Snapshot
-- **Phase:** feature build on a working local demo.
-- **Branch:** `main` (in sync with `origin/main`).
-- **Latest commit:** `8008c02` — SQLite persistence for chat sessions + outbox.
-- **Model:** `claude-haiku-4-5-20251001`.
-- **Runtime:** Node.js ES modules, Express, no build step. `npm start` -> http://localhost:3000.
+- **Current implementation:** a working local, single-user demo with the Anthropic API and a
+  plain-JavaScript UI. Local SQLite persists chat sessions and approval-outbox drafts.
+- **Future target:** hosted SaaS for real small-business owners. The approved beachhead
+  direction is inventory-based businesses in El Paso, Texas, and Ciudad Juarez, Mexico,
+  beginning with coffee shops and flooring, wall-material, and related
+  building/interior-finish wholesalers. This target is not built or committed to the backlog.
+- **Immediate gate:** customer discovery must validate the beachhead problem,
+  first-customer profile, shared MVP jobs, source systems, language needs, and willingness
+  to pay before product backlog commitment or implementation. Discovery is incomplete.
 
----
+The demo has exactly seven ready-to-run workflows and exactly four mock connector domains:
+QuickBooks, PayPal, HubSpot, and inventory.
 
-## Done (verified end-to-end)
+## Current API Routes
+
+Exactly eight routes are implemented:
+
+| Method | Route |
+|--------|-------|
+| GET | `/api/health` |
+| GET | `/api/config` |
+| GET | `/api/metrics` |
+| GET | `/api/outbox` |
+| GET | `/api/inventory` |
+| POST | `/api/outbox/:id/approve` |
+| POST | `/api/chat` |
+| POST | `/api/reset` |
+
+## Historical Completion Evidence
+
+The following table records past completed work and commit evidence. It is historical evidence,
+not current operating instructions or authorization for new work.
+
 | # | Item | Commit |
 |---|------|--------|
 | 1 | Initial full-stack demo (chat, tool-use loop, outbox, 3 connectors) | `e1e72b0` |
@@ -22,64 +44,40 @@ Last updated: 2026-07-09
 | 3 | Dark mode fix: high-contrast slate palette | `9263ff4` |
 | 4 | Dashboard: KPI tiles + campaign ROI via `/api/metrics` | `e400a1b` |
 | 5 | Dashboard: collapsible overview + cash-movement sparkline | `bf2e711` |
-| 6 | Inventory optimizer: forecast + reorder plan (`/api/inventory`, 📦 workflow, dashboard card) | `cd5bccc` |
-| 7 | TASK-001: SQLite persistence for chat sessions + outbox (built-in `node:sqlite`, survives restart) | `8008c02` |
+| 6 | Inventory optimizer: forecast + reorder plan (`/api/inventory`, inventory workflow, dashboard card) | `cd5bccc` |
+| 7 | TASK-001: SQLite persistence for chat sessions + approval outbox (built-in `node:sqlite`, survives restart) | `8008c02` |
 
-**Current capability:** 4 connectors · 15 tools · 7 workflows · dashboard · inventory optimizer · persistent state.
+## Protected Product Invariants
 
----
+- Anything that would send, post, pay, or place an order remains a draft in the approval
+  outbox until explicit owner approval; approval currently produces no real external side
+  effect.
+- The connector/tool contract remains stable unless separately specified and approved.
+- Financial, inventory, and optimization calculations remain deterministic server-side
+  operations. The model may explain them but must not invent or replace them.
+- Secrets remain only in `.env` and never enter Git, logs, evidence, or browser code.
 
-## In flight
-_(none — no active task briefs)_
+## Git Policy and Enforcement State
 
-| Task | Brief | Files in scope | Status |
-|------|-------|----------------|--------|
-| — | — | — | — |
+`main` is protected by policy. Changes use short-lived branches and may enter `main` only by
+pull request after required checks pass. Direct commits to `main` are prohibited.
 
----
+Git-hosting branch protection, host tests, continuous integration, and required pull-request
+checks are not configured or mechanically validated. Compliance is procedural; Sprint 2 owns
+mechanical enforcement if separately authorized.
 
-## Blocked
-_(none)_
+## Sprint 2 Readiness Deferrals
 
----
+- Select and add an `npm test` host runner plus an automated `GET /api/health` smoke test.
+- Add host CI and required pull-request checks.
+- Mechanically validate the owner-approved Node.js `>=24` runtime policy and align package
+  metadata. `package.json` remains `>=18`; policy is not validation evidence.
+- Make state-builder and doctor behavior host-aware.
+- Verify ledger and work-index behavior.
+- Complete a clean-clone final-readiness rehearsal.
 
-## Backlog (not started — need a task brief before pickup)
+## Readiness Boundaries
 
-> **Reframed 2026-07-09:** goal is a **sellable product for real small-business owners**, not a
-> personal tool. Full gap analysis in `docs/PRODUCT_ROADMAP.md`. Backlog now tracks productization
-> themes. Pending the business-model decision (hosted SaaS vs self-host/white-label).
-
-| Theme | Item | Notes |
-|-------|------|-------|
-| T1 Integrations | Real outbound email on approval | Smallest real connector; most convincing; first real-secret pattern |
-| T1 Integrations | QuickBooks / PayPal / HubSpot OAuth | Replace mock bodies; keep tool interface stable |
-| T3 Security | Encrypted connector creds, audit log, prompt-injection wrapping | Before handling real financial data |
-| T2 Tenancy | Accounts, login, per-tenant data isolation | Structural leap demo -> product |
-| T4 Reliability | LLM retries/fallback, per-tenant cost budgets/metering | Protects UX + margins |
-| T5 Billing | Subscriptions (Stripe), plans, entitlements | Monetization |
-| T6 Deploy/Ops | Cloud hosting, CI/CD, observability, secrets vault | Off localhost |
-| T7 Onboarding | Connect-accounts flow, customizable workflows/branding | Conversion + framework angle |
-| T8 Legal | ToS, Privacy, DPA, GDPR/CCPA export/delete | Required to charge for financial tooling |
-| Enhancement | Better forecast models | Holt-Winters/trend behind same `inv_optimize` interface |
-| Enhancement | Streaming / SSE chat | progressive responses in the UI |
-
----
-
-## Decisions & constraints (project memory)
-- **Human-in-the-loop:** anything that sends/posts/pays must go through a `draft_*`/`create_report`
-  tool into the outbox. The agent never claims it actually sent something.
-- **Numbers are server-side:** all math (metrics, forecasts, reorder) is computed in Node;
-  the LLM only explains. Never let the model compute figures.
-- **Connector interface stability:** going live = swap a mock function body for a real API call
-  without changing the tool interface.
-- **No build step**, dependency-light, must "just run".
-- **Secrets:** `.env` holds the API key, git-ignored. Never commit or print it.
-- **npm quirk:** local `.npmrc` -> npmjs.org (global feed is a private MS feed that 401s).
-
----
-
-## How to add a task
-1. PM copies `docs/tasks/TASK_BRIEF_TEMPLATE.md` to `docs/tasks/TASK-###-<slug>.md`.
-2. Fill goal, scope, out-of-scope, acceptance checks, verification steps.
-3. Human opens a new worker session and pastes the worker kick-off prompt from `docs/KICK_OFF.md` §5.
-4. On completion, PM moves the row to **Done** and bumps "Last updated".
+The working local demo is not evidence of full SDD, CI, runtime, clean-clone, or automated
+branch-protection readiness. Those claims remain denied until the deferred checks pass. Customer
+discovery is incomplete, and hosted SaaS is neither complete nor committed for implementation.

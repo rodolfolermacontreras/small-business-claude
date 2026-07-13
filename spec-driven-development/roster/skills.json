@@ -1,0 +1,317 @@
+[
+  {
+    "id": "sdd-constitution",
+    "path": ".github/skills/core/sdd-constitution/SKILL.md",
+    "category": "core",
+    "description": "Loads the SDD constitution and immutable operating rules.",
+    "lifecycle": "active", "host_scope": "framework-process", "provenance": "adopted-sdd-framework",
+    "compatibility": { "status": "compatible", "target": "small-business-claude", "notes": "Stack-neutral governance workflow." },
+    "activation": { "status": "active", "mode": "explicit-manifest", "dependencies": ["host constitution"] }
+  },
+  {
+    "id": "project-context",
+    "path": ".github/skills/core/project-context/SKILL.md",
+    "category": "core",
+    "description": "Provides host project context, architecture, and conventions.",
+    "lifecycle": "inactive", "host_scope": "reference-example", "provenance": "adopted-sdd-framework",
+    "compatibility": { "status": "incompatible", "target": "small-business-claude", "notes": "Copied fleet/worktree assumptions require R1-T14 adaptation." },
+    "activation": { "status": "inactive", "mode": "explicit-manifest", "dependencies": ["R1-T14"] }
+  },
+  {
+    "id": "git-workflow",
+    "path": ".github/skills/core/git-workflow/SKILL.md",
+    "category": "core",
+    "description": "Enforces feature-branch and worktree rules for this repository.",
+    "lifecycle": "inactive", "host_scope": "reference-example", "provenance": "day-to-day-agent",
+    "compatibility": { "status": "incompatible", "target": "small-business-claude", "notes": "Prescribes master, integration/improvements, mandatory worktrees, Day-to-Day paths, and pytest; R1-T14 owns adaptation." },
+    "activation": { "status": "inactive", "mode": "explicit-manifest", "dependencies": ["R1-T14"] }
+  },
+  {
+    "id": "testing-conventions",
+    "path": ".github/skills/core/testing-conventions/SKILL.md",
+    "category": "core",
+    "description": "Captures pytest, tmp_path, and project-specific test fixture norms.",
+    "lifecycle": "reference", "host_scope": "reference-example", "provenance": "day-to-day-agent",
+    "compatibility": { "status": "incompatible", "target": "small-business-claude", "notes": "Python/pytest guidance is not valid for this Node.js host; test selection is deferred to Sprint 2." },
+    "activation": { "status": "inactive", "mode": "reference-only", "dependencies": [] }
+  },
+  {
+    "id": "constitution-sync",
+    "path": ".github/skills/core/constitution-sync/SKILL.md",
+    "category": "core",
+    "description": "Scans skills, prompts, and templates for references to amended constitution content. Returns alignment verdict per reference (ALIGNED / NEEDS-REVIEW / NEEDS-UPDATE). Backs /constitution and ADR-0006.",
+    "lifecycle": "active", "host_scope": "framework-process", "provenance": "adopted-sdd-framework",
+    "compatibility": { "status": "compatible", "target": "small-business-claude", "notes": "Read-only, stack-neutral constitution propagation review." },
+    "activation": { "status": "active", "mode": "explicit-manifest", "dependencies": ["sdd-constitution"] }
+  },
+  {
+    "id": "archetype-recommender",
+    "path": ".github/skills/workflow/archetype-recommender/SKILL.md",
+    "category": "workflow",
+    "description": "Guides greenfield and brownfield project kickoff to a best-fit archetype, with /evolve fallback when none fit.",
+    "lifecycle": "reference", "host_scope": "framework-cli", "provenance": "adopted-sdd-framework",
+    "compatibility": { "status": "conditional", "target": "sdd-framework-cli", "notes": "Python applies only to framework bootstrap; shipped archetypes do not model this Node host." },
+    "activation": { "status": "inactive", "mode": "reference-only", "dependencies": [] }
+  },
+  {
+    "id": "grill-me",
+    "path": ".github/skills/workflow/grill-me/SKILL.md",
+    "category": "workflow",
+    "description": "Runs one-question-at-a-time clarification sessions.",
+    "lifecycle": "active", "host_scope": "framework-process", "provenance": "adopted-sdd-framework",
+    "compatibility": { "status": "compatible", "target": "small-business-claude", "notes": "Stack-neutral clarification workflow." },
+    "activation": { "status": "active", "mode": "explicit-manifest", "dependencies": [] }
+  },
+  {
+    "id": "grill-with-docs",
+    "path": ".github/skills/workflow/grill-with-docs/SKILL.md",
+    "category": "workflow",
+    "description": "Extends clarification sessions with CONTEXT.md and ADR updates.",
+    "lifecycle": "inactive", "host_scope": "reference-example", "provenance": "day-to-day-agent",
+    "compatibility": { "status": "incompatible", "target": "small-business-claude", "notes": "Contains Day-to-Day model/path examples." },
+    "activation": { "status": "inactive", "mode": "explicit-manifest", "dependencies": ["host adaptation"] }
+  },
+  {
+    "id": "to-spec",
+    "path": ".github/skills/workflow/to-spec/SKILL.md",
+    "category": "workflow",
+    "description": "Converts clarified requirements into a feature spec.",
+    "lifecycle": "inactive", "host_scope": "reference-example", "provenance": "day-to-day-agent",
+    "compatibility": { "status": "incompatible", "target": "small-business-claude", "notes": "Examples prescribe Day-to-Day agent paths and contracts." },
+    "activation": { "status": "inactive", "mode": "explicit-manifest", "dependencies": ["host member adaptation"] }
+  },
+  {
+    "id": "to-plan",
+    "path": ".github/skills/workflow/to-plan/SKILL.md",
+    "category": "workflow",
+    "description": "Builds an implementation plan from an approved spec.",
+    "lifecycle": "inactive", "host_scope": "reference-example", "provenance": "day-to-day-agent",
+    "compatibility": { "status": "incompatible", "target": "small-business-claude", "notes": "Examples prescribe Python/pytest and Day-to-Day paths." },
+    "activation": { "status": "inactive", "mode": "explicit-manifest", "dependencies": ["host member adaptation"] }
+  },
+  {
+    "id": "to-tasks",
+    "path": ".github/skills/workflow/to-tasks/SKILL.md",
+    "category": "workflow",
+    "description": "Breaks approved plans into dispatchable tasks.",
+    "lifecycle": "inactive", "host_scope": "reference-example", "provenance": "day-to-day-agent",
+    "compatibility": { "status": "incompatible", "target": "small-business-claude", "notes": "Examples prescribe SQLModel, Python, and Day-to-Day paths." },
+    "activation": { "status": "inactive", "mode": "explicit-manifest", "dependencies": ["host member adaptation"] }
+  },
+  {
+    "id": "triage",
+    "path": ".github/skills/workflow/triage/SKILL.md",
+    "category": "workflow",
+    "description": "Scores and prioritizes incoming ideas using backlog rules.",
+    "lifecycle": "inactive", "host_scope": "framework-process", "provenance": "adopted-sdd-framework",
+    "compatibility": { "status": "conditional", "target": "small-business-claude", "notes": "Stack-neutral, but product triage is unavailable until customer discovery and PM authorization." },
+    "activation": { "status": "unavailable", "mode": "explicit-manifest", "dependencies": ["customer-discovery gate", "PM authorization"] }
+  },
+  {
+    "id": "implement",
+    "path": ".github/skills/workflow/implement/SKILL.md",
+    "category": "workflow",
+    "description": "Guides workers through task implementation and reporting.",
+    "lifecycle": "inactive", "host_scope": "reference-example", "provenance": "day-to-day-agent",
+    "compatibility": { "status": "incompatible", "target": "small-business-claude", "notes": "Prescribes Python/pytest and Day-to-Day paths; R1-T15 owns adaptation." },
+    "activation": { "status": "inactive", "mode": "explicit-manifest", "dependencies": ["R1-T15", "Sprint 2 test contract"] }
+  },
+  {
+    "id": "tdd",
+    "path": ".github/skills/engineering/tdd/SKILL.md",
+    "category": "engineering",
+    "description": "Enforces red-green-refactor and test-first delivery.",
+    "lifecycle": "inactive", "host_scope": "reference-example", "provenance": "day-to-day-agent",
+    "compatibility": { "status": "incompatible", "target": "small-business-claude", "notes": "Examples require Python/pytest and Day-to-Day paths; host tests are deferred to Sprint 2." },
+    "activation": { "status": "inactive", "mode": "explicit-manifest", "dependencies": ["Sprint 2 test contract", "host adaptation"] }
+  },
+  {
+    "id": "tdd-gate",
+    "path": ".github/skills/engineering/tdd-gate/SKILL.md",
+    "category": "engineering",
+    "description": "Mechanical diff check for spec-compliance reviewer: production code added without tests is flagged unless tagged [NO-TEST-NEEDED]. Backs Article X.",
+    "lifecycle": "reference", "host_scope": "framework-cli", "provenance": "adopted-sdd-framework",
+    "compatibility": { "status": "conditional", "target": "sdd-framework-cli", "notes": "Python implementation is framework-only; copied doctor/push enforcement is not host CI evidence." },
+    "activation": { "status": "inactive", "mode": "reference-only", "dependencies": ["Sprint 2 host test and CI contract"] }
+  },
+  {
+    "id": "diagnose",
+    "path": ".github/skills/engineering/diagnose/SKILL.md",
+    "category": "engineering",
+    "description": "Performs root-cause analysis before any proposed fix.",
+    "lifecycle": "inactive", "host_scope": "reference-example", "provenance": "day-to-day-agent",
+    "compatibility": { "status": "incompatible", "target": "small-business-claude", "notes": "Prescribes Python/pytest, world_state.py, and Day-to-Day paths." },
+    "activation": { "status": "inactive", "mode": "explicit-manifest", "dependencies": ["host adaptation", "Sprint 2 test contract"] }
+  },
+  {
+    "id": "code-review",
+    "path": ".github/skills/engineering/code-review/SKILL.md",
+    "category": "engineering",
+    "description": "Runs stage-1 and stage-2 review checks for completed work.",
+    "lifecycle": "inactive", "host_scope": "reference-example", "provenance": "day-to-day-agent",
+    "compatibility": { "status": "incompatible", "target": "small-business-claude", "notes": "Prescribes Python/pytest and Day-to-Day paths; R1-T15 owns adaptation." },
+    "activation": { "status": "inactive", "mode": "explicit-manifest", "dependencies": ["R1-T15", "Sprint 2 test contract"] }
+  },
+  {
+    "id": "improve-architecture",
+    "path": ".github/skills/engineering/improve-architecture/SKILL.md",
+    "category": "engineering",
+    "description": "Evaluates structural changes and architecture tradeoffs.",
+    "lifecycle": "inactive", "host_scope": "reference-example", "provenance": "day-to-day-agent",
+    "compatibility": { "status": "incompatible", "target": "small-business-claude", "notes": "Examples and mandatory patterns are Python/SQLModel/Day-to-Day-specific." },
+    "activation": { "status": "inactive", "mode": "explicit-manifest", "dependencies": ["host adaptation"] }
+  },
+  {
+    "id": "fleet-coordinator",
+    "path": ".github/skills/operational/fleet-coordinator/SKILL.md",
+    "category": "operational",
+    "description": "Applies dispatch logic, conflict checks, and batch management.",
+    "lifecycle": "reference", "host_scope": "framework-cli", "provenance": "adopted-sdd-framework",
+    "compatibility": { "status": "conditional", "target": "sdd-framework-cli", "notes": "Python/worktree commands are framework-only; fleet, ledger, and work-index mechanics are not host-validated." },
+    "activation": { "status": "inactive", "mode": "reference-only", "dependencies": ["Sprint 2 ledger/work-index validation", "dispatch authorization"] }
+  },
+  {
+    "id": "handoff",
+    "path": ".github/skills/operational/handoff/SKILL.md",
+    "category": "operational",
+    "description": "Compacts a session into a short handoff document for the next session or agent, referencing artifacts by path.",
+    "lifecycle": "inactive", "host_scope": "framework-process", "provenance": "adopted-sdd-framework",
+    "compatibility": { "status": "conditional", "target": "small-business-claude", "notes": "Mostly stack-neutral; temporary-file writes and fleet/worktree context require scoped review." },
+    "activation": { "status": "inactive", "mode": "explicit-manifest", "dependencies": ["authorized handoff write scope"] }
+  },
+  {
+    "id": "lesson-capture",
+    "path": ".github/skills/operational/lesson-capture/SKILL.md",
+    "category": "operational",
+    "description": "Append a tagged lesson candidate to the current PI's lessons.md when project work reveals a missing skill, unclear role, template gap, or constitution ambiguity. Feeds /evolve.",
+    "lifecycle": "active", "host_scope": "framework-process", "provenance": "adopted-sdd-framework",
+    "compatibility": { "status": "compatible", "target": "small-business-claude", "notes": "Stack-neutral; file mutation still requires authorized scope." },
+    "activation": { "status": "active", "mode": "explicit-manifest", "dependencies": ["authorized lessons-file write scope"] }
+  },
+  {
+    "id": "pi-planning",
+    "path": ".github/skills/operational/pi-planning/SKILL.md",
+    "category": "operational",
+    "description": "Supports PI planning, sprint planning, and backlog shaping.",
+    "lifecycle": "inactive", "host_scope": "reference-example", "provenance": "adopted-sdd-framework",
+    "compatibility": { "status": "conditional", "target": "small-business-claude", "notes": "Cadence, capacity, commit, and backlog assumptions require host governance review." },
+    "activation": { "status": "inactive", "mode": "explicit-manifest", "dependencies": ["PM member review"] }
+  },
+  {
+    "id": "respect-existing",
+    "path": ".github/skills/operational/respect-existing/SKILL.md",
+    "category": "operational",
+    "description": "Constrains brownfield workers to preserve existing conventions and avoid out-of-scope rewrites.",
+    "lifecycle": "active", "host_scope": "framework-process", "provenance": "adopted-sdd-framework",
+    "compatibility": { "status": "compatible", "target": "small-business-claude", "notes": "Stack-neutral and required by host principle H2; does not authorize dispatch." },
+    "activation": { "status": "active", "mode": "explicit-manifest", "dependencies": ["explicit task scope"] }
+  },
+  {
+    "id": "role-creation",
+    "path": ".github/skills/operational/role-creation/SKILL.md",
+    "category": "operational",
+    "description": "Drafts new generic worker roles and specialist promotions for /hire, including agent templates, roster schema, Fleet state, and ledger decision convention.",
+    "lifecycle": "reference", "host_scope": "framework-cli", "provenance": "adopted-sdd-framework",
+    "compatibility": { "status": "conditional", "target": "sdd-framework-cli", "notes": "Framework-only roster/ledger workflow; hiring and ledger mechanics are not authorized or host-validated." },
+    "activation": { "status": "inactive", "mode": "reference-only", "dependencies": ["Level 2 hire authorization", "Sprint 2 ledger validation"] }
+  },
+  {
+    "id": "em-communication-discipline",
+    "path": ".github/skills/operational/em-communication-discipline/SKILL.md",
+    "category": "operational",
+    "description": "Default communication mode for the Executive Manager. Enforces 'recommend, do not menu' so routine sequencing decisions do not tax the human's cognitive budget. Triggered by LESSON-005.",
+    "lifecycle": "active", "host_scope": "framework-process", "provenance": "adopted-sdd-framework",
+    "compatibility": { "status": "compatible", "target": "small-business-claude", "notes": "Stack-neutral owner communication discipline." },
+    "activation": { "status": "active", "mode": "explicit-manifest", "dependencies": [] }
+  },
+  {
+    "id": "azure-deployment-architecture",
+    "path": ".github/skills/operational/azure-deployment-architecture/SKILL.md",
+    "category": "operational",
+    "description": "Default Azure deployment pattern (Container Apps + Entra ID auth + scale-to-zero) with security defaults, threat-model template, and cost ceiling. Owned by principal-cloud-security-architect.",
+    "lifecycle": "reference", "host_scope": "reference-example", "provenance": "day-to-day-agent",
+    "compatibility": { "status": "conditional", "target": "small-business-claude", "notes": "Future hosted deployment reference; cloud/external integration requires separate approval." },
+    "activation": { "status": "inactive", "mode": "reference-only", "dependencies": ["customer discovery", "Level 2 deployment authorization"] }
+  },
+  {
+    "id": "pytest-runner",
+    "path": ".github/skills/domain/pytest-runner/SKILL.md",
+    "category": "domain",
+    "description": "Encodes project-specific pytest execution and triage patterns.",
+    "lifecycle": "reference", "host_scope": "reference-example", "provenance": "day-to-day-agent",
+    "compatibility": { "status": "incompatible", "target": "small-business-claude", "notes": "Explicit Day-to-Day Python/pytest example." },
+    "activation": { "status": "inactive", "mode": "reference-only", "dependencies": [] }
+  },
+  {
+    "id": "fastapi-routes",
+    "path": ".github/skills/domain/fastapi-routes/SKILL.md",
+    "category": "domain",
+    "description": "Captures FastAPI route conventions for Day-to-Day.",
+    "lifecycle": "reference", "host_scope": "reference-example", "provenance": "day-to-day-agent",
+    "compatibility": { "status": "incompatible", "target": "small-business-claude", "notes": "Explicit Day-to-Day FastAPI/Pydantic/SQLModel example; host uses Express 5." },
+    "activation": { "status": "inactive", "mode": "reference-only", "dependencies": [] }
+  },
+  {
+    "id": "htmx-frontend",
+    "path": ".github/skills/domain/htmx-frontend/SKILL.md",
+    "category": "domain",
+    "description": "Captures HTMX, Jinja2, and template-level UI conventions.",
+    "lifecycle": "reference", "host_scope": "reference-example", "provenance": "day-to-day-agent",
+    "compatibility": { "status": "incompatible", "target": "small-business-claude", "notes": "Explicit Day-to-Day HTMX/Jinja2/FastAPI example; host uses plain browser JavaScript." },
+    "activation": { "status": "inactive", "mode": "reference-only", "dependencies": [] }
+  },
+  {
+    "id": "weekly-status-report",
+    "path": ".github/skills/operational/weekly-status-report/SKILL.md",
+    "category": "operational",
+    "description": "Generates or updates the weekly 1:1 status report by scanning git commits, code changes, tests, specs, sessions, and sprints. Appends a new week section to docs/1_1_STATUS_REPORT_SDD.md.",
+    "lifecycle": "reference", "host_scope": "framework-cli", "provenance": "adopted-sdd-framework",
+    "compatibility": { "status": "conditional", "target": "sdd-framework-cli", "notes": "Python applies only to framework reporting; copied paths/test assumptions require host review." },
+    "activation": { "status": "inactive", "mode": "reference-only", "dependencies": ["host report contract"] }
+  },
+  {
+    "id": "design-tokens",
+    "path": ".github/skills/operational/design-tokens/SKILL.md",
+    "category": "operational",
+    "description": "Enforces the framework's visual token structure: semantic color palette, modular type scale, spacing scale, motion principles, accessibility contract. Ensures tokens are implementable as CSS custom properties and maintain WCAG 2.1 AA compliance.",
+    "lifecycle": "reference", "host_scope": "reference-example", "provenance": "adopted-sdd-framework",
+    "compatibility": { "status": "conditional", "target": "small-business-claude", "notes": "CSS concepts are compatible; framework UI assumptions and emoji fallback require host review." },
+    "activation": { "status": "inactive", "mode": "reference-only", "dependencies": ["host UI spec", "UI review"] }
+  },
+  {
+    "id": "host-integration-symlink",
+    "path": ".github/skills/operational/host-integration-symlink/SKILL.md",
+    "category": "operational",
+    "description": "Installs the framework's .github/ into a host repo via cross-platform symlink (Linux/macOS) or junction (Windows); handles conflict detection (abort/backup/force), platform fallback, and rollback. Loaded by dev-env-manager-general worker for SDD-016 host-link tasks.",
+    "lifecycle": "reference", "host_scope": "framework-cli", "provenance": "adopted-sdd-framework",
+    "compatibility": { "status": "conditional", "target": "sdd-framework-cli", "notes": "Python and Day-to-Day paths are framework host-link examples, not application requirements." },
+    "activation": { "status": "inactive", "mode": "reference-only", "dependencies": ["host-link authorization"] }
+  },
+  {
+    "id": "session-self-review",
+    "path": ".github/skills/operational/session-self-review/SKILL.md",
+    "category": "operational",
+    "description": "Produces advisory end-of-session self-review records with SDD-023 gate findings and routes durable lessons through lesson-capture, /evolve, PM triage, /constitution, or approved tasks.",
+    "lifecycle": "inactive", "host_scope": "framework-process", "provenance": "adopted-sdd-framework",
+    "compatibility": { "status": "conditional", "target": "small-business-claude", "notes": "Advisory method is stack-neutral; copied pytest/generated-state evidence needs contextual review." },
+    "activation": { "status": "inactive", "mode": "explicit-manifest", "dependencies": ["host evidence review"] }
+  },
+  {
+    "id": "stakeholder-pressure-defense",
+    "path": ".github/skills/operational/stakeholder-pressure-defense/SKILL.md",
+    "category": "operational",
+    "description": "Classifies pressure against validation, approval, traceability, evidence, external-write, and Level-2 rules; cites SDD-023 gates and routes irreversible shortcuts through SDD-014 Friction Analysis.",
+    "lifecycle": "active", "host_scope": "framework-process", "provenance": "adopted-sdd-framework",
+    "compatibility": { "status": "compatible", "target": "small-business-claude", "notes": "Stack-neutral governance safety; does not authorize external writes." },
+    "activation": { "status": "active", "mode": "explicit-manifest", "dependencies": [] }
+  },
+  {
+    "id": "pre-work-check",
+    "path": ".github/skills/core/pre-work-check/SKILL.md",
+    "category": "core",
+    "description": "Cross-checks proposed work against the generated work index before authorization.",
+    "lifecycle": "inactive", "host_scope": "framework-process", "provenance": "adopted-sdd-framework",
+    "compatibility": { "status": "conditional", "target": "small-business-claude", "notes": "Conceptually stack-neutral, but the required work index and freshness mechanics are absent." },
+    "activation": { "status": "unavailable", "mode": "explicit-manifest", "dependencies": ["Sprint 2 work-index generation", "Sprint 2 freshness verification"], "available_after": "Sprint 2 evidence and Principal Architect revalidation" }
+  }
+]
